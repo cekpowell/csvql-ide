@@ -1,2 +1,2 @@
-# Choran IDE
-An IDE created for the Choran programming language - built on top of the Choran interpreter developed in COMP2212: Programming Language Concepts.
+# CSVQL IDE
+An IDE created for the CSVQL programming language - built on top of the CSVQL language and interpreter developed in COMP2212: Programming Language Concepts.
