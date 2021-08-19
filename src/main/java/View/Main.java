@@ -5,6 +5,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import Controller.SystemController;
+import View.App.Dashboard;
+import View.App.Toolbar;
 
 /**
  * Main class for the application.
@@ -34,16 +37,26 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) throws Exception {
         // creating application components
-        Toolbar toolbar = new Toolbar();
         Dashboard dashboard = new Dashboard();
+        Toolbar toolbar = new Toolbar(dashboard);
 
+        // configuring system controller
+        SystemController.setToolbar(toolbar);
+        SystemController.setDashboard(dashboard);
+
+        // container for components
         VBox container = new VBox();
         container.getChildren().addAll(toolbar,dashboard);
         VBox.setVgrow(dashboard,Priority.ALWAYS);
 
-        // configuring the stage
+        // configuring the scene
         Scene scene = new Scene(container,1200,750);
+
+
+        // configuring the stage
         stage.setScene(scene);
+
+        // loading the stage
         stage.setTitle(titleName + " by " + authorName);
         stage.show();
     }
