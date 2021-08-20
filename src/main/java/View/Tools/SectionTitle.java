@@ -20,12 +20,14 @@ public class SectionTitle extends Label{
      * @param title The title.
      */
     public SectionTitle(String title){
+        // initializing
         super(title);
 
         /////////////////
         // CONFIGURING //
         ///////////////// 
         
+        // formatting the title
         this.setFont(Font.font(font, fontWeight, fontSize)); // TODO should be done with CSS
     }
 }

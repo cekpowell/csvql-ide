@@ -37,13 +37,15 @@ public class NewProgramForm extends InputForm{
         super(title, width, height, confirmText, cancelText, false);
         this.filename = new TextField();
         this.noteLabel = new Label(initialNote);
+        
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
-
+        // Filename label
         Label filenameLabel = new Label("Filename:");
 
+        // contanier for all items
         VBox container = new VBox(filenameLabel, this.filename, this.noteLabel);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(10));
@@ -53,6 +55,10 @@ public class NewProgramForm extends InputForm{
         // CONFIGURING //
         /////////////////
 
+        // selecting text field
+        this.filename.requestFocus();
+
+        // adding content to form
         this.setContent(container);
     }
 
@@ -82,8 +88,7 @@ public class NewProgramForm extends InputForm{
                 this.close();
             }
             catch(Exception ex){
-                ErrorAlert errorAlert = new ErrorAlert(ex);
-                errorAlert.showWindow(this.getScene().getWindow());
+                ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
             }
         }
     }

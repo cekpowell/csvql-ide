@@ -1,6 +1,7 @@
 package View.FileStore;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 
 import javafx.geometry.Insets;
@@ -34,7 +35,7 @@ public class FileStore extends VBox{
      * @param dashboard The dashboard associated with the panel
      */
     public FileStore(Dashboard dashboard){
-        // initialising member vairables
+        // Initialising //
         this.dashboard = dashboard;
         this.fileContainer = new FlowPane();
         this.files = new ArrayList<LoadedFile>();
@@ -43,9 +44,15 @@ public class FileStore extends VBox{
                                                        "Clear File Store", 
                                                        "Are you sure you want to remove all loaded files from the file store?");
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////        
+        // Configuring Member Variables //
+
+        // file container
+        this.fileContainer.setHgap(10);
+        this.fileContainer.setOrientation(Orientation.HORIZONTAL);
+
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////        
 
         // configuring title label
         SectionTitle titleLabel = new SectionTitle("CSV File Store");
@@ -67,10 +74,6 @@ public class FileStore extends VBox{
         // CONFIGURING //
         /////////////////
 
-        // configuring file container
-        this.fileContainer.setHgap(10);
-        this.fileContainer.setOrientation(Orientation.HORIZONTAL);
-
         // adding main container to view
         this.getChildren().addAll(headerContainer, this.fileContainer);
 
@@ -90,17 +93,18 @@ public class FileStore extends VBox{
             fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSV Files", "*.csv"));
 
             // showing the open dialog
-            File selectedFile = fileChooser.showOpenDialog(this.getScene().getWindow());
+            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
             // adding the file to the filestore if a file was gathered
-            if (selectedFile != null) {
-                try{
-                    this.addFile(selectedFile);
-                }
-                // handling error
-                catch(Exception ex){
-                    ErrorAlert errorAlert = new ErrorAlert(ex);
-                    errorAlert.showWindow(this.getScene().getWindow());
+            if (selectedFiles != null) {
+                for(File file : selectedFiles){
+                    try{
+                        this.addFile(file);
+                    }
+                    // handling error
+                    catch(Exception ex){
+                        ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
+                    }
                 }
             }
         });
@@ -159,5 +163,28 @@ public class FileStore extends VBox{
 
         // removing loaded files from list
         this.files.clear();
+    }
+
+
+    /////////////////////////
+    // GETTERS AND SETTERS //
+    /////////////////////////
+
+    public ArrayList<File> getFiles(){
+
+        // list to store files
+        ArrayList<File> files = new ArrayList<File>();
+
+        // gathering all loaded files
+        for(LoadedFile loadedFile : this.files){
+            files.add(loadedFile.getFile());
+        }
+
+        // returning files
+        return files;
+    }
+
+    public ArrayList<LoadedFile> getLoadedFiles(){
+        return this.files;
     }
 }

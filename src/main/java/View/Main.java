@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import Controller.SystemController;
 import View.App.Dashboard;
 import View.App.Toolbar;
@@ -51,7 +52,6 @@ public class Main extends Application{
 
         // configuring the scene
         Scene scene = new Scene(container,1200,750);
-
 
         // configuring the stage
         stage.setScene(scene);

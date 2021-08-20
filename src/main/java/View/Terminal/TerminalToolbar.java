@@ -31,6 +31,12 @@ public class TerminalToolbar extends FlowPane{
         this.csvButton = new ToggleButton("CSV");
         this.consoleButton = new ToggleButton("Console");
 
+        // Configuring Member Variables //
+
+        // disabling table and console
+        this.tableButton.setDisable(true);
+        this.consoleButton.setDisable(true);
+
         // configuriing toggle group
         this.tableButton.setToggleGroup(this.outputFormat);
         this.csvButton.setToggleGroup(this.outputFormat);

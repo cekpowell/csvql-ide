@@ -26,7 +26,11 @@ public class ProgramContainer extends TabPane{
         this.programs = new ArrayList<Program>(); 
         this.currentProgram = null;
 
-        // Connfiguriing
+        /////////////////
+        // CONFIGURING //
+        /////////////////
+
+        // formatting the tab pane
         this.getStyleClass().add("floating"); // TODO should be done with CSS
     }
 

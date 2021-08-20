@@ -79,9 +79,9 @@ public abstract class InputForm extends Stage {
         }
         
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
         // container for submit and cancel buttons
         HBox controlsContainer = new HBox();
@@ -102,6 +102,7 @@ public abstract class InputForm extends Stage {
         // adding control buttons to form
         this.container.setBottom(separatorContainer);
 
+        // configuring the form
         this.initModality(Modality.APPLICATION_MODAL);
         this.setTitle(title);
 

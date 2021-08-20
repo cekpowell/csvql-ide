@@ -7,8 +7,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 
-import java.util.Optional;
-
 /**
  * Button that asks for confirmation before carrying out the action.
  */
@@ -22,7 +20,8 @@ public class ConfirmationButton extends Button {
 
     // member variables
     private String label;
-    private Alert confirmationWindow;
+    private String confirmationTitle;
+    private String confirmationMessage;
 
     /**
      * Class constructor.
@@ -32,9 +31,8 @@ public class ConfirmationButton extends Button {
      * @param confirmationMessage The message displayed in the confirmation window.
      */
     public ConfirmationButton(String label, String confirmationTitle, String confirmationMessage){
+        // initializing
         super(label);
-
-        // initializing 
         this.init(confirmationTitle, confirmationMessage);
     }
 
@@ -47,18 +45,21 @@ public class ConfirmationButton extends Button {
      * @param confirmationMessage The message displayed in the confirmation window.
      */
     public ConfirmationButton(String label, ImageView image, String confirmationTitle, String confirmationMessage){
-        super(label, image);
-
         // initializing
-       this.init(confirmationTitle, confirmationMessage);
+        super(label, image);
+        this.init(confirmationTitle, confirmationMessage);
     }
 
+    /**
+     * Init method - used as multiple constructors.
+     * 
+     * @param confirmationTitle The title for the confirmation window.
+     * @param confirmationMessage The message displayed in the confirmation window.
+     */
     private void init(String confirmationTitle, String confirmationMessage){
         // setting up confirmation window
-        this.confirmationWindow = new Alert(Alert.AlertType.CONFIRMATION, "", confirm, cancel);
-        this.confirmationWindow.setTitle(confirmationTitle);
-        this.confirmationWindow.setHeaderText(confirmationMessage);
-        this.confirmationWindow.getDialogPane().setPrefSize(width, height);
+        this.confirmationTitle = confirmationTitle;
+        this.confirmationMessage = confirmationMessage;
     }
 
     /**
@@ -66,17 +67,6 @@ public class ConfirmationButton extends Button {
      * @return True if the user selected confirm, false if selected cancel.
      */
     public boolean showConfirmationWindow(Window owner){
-        this.confirmationWindow.initOwner(owner);
-        // displaying the window and getting the result
-        Optional<ButtonType> result = this.confirmationWindow.showAndWait();
-
-        // user presses confirm
-        if(result.get() == confirm){
-            return true;
-        }
-        // user presses cancel (or closes window)
-        else{
-            return false;
-        }
+        return ConfirmationWindow.showConfirmationWindow(owner, this.confirmationTitle, this.confirmationMessage);
     }
 }

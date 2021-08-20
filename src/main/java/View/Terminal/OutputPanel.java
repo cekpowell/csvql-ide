@@ -27,4 +27,11 @@ public abstract class OutputPanel extends BorderPane{
 
         this.setTop(this.toolbar);
     }
+
+    /**
+     * Displays the provided program output within the panel.
+     * 
+     * @param output The program output to be displayed within the panel.
+     */
+    public abstract void displayProgramOutput(String output);
 }

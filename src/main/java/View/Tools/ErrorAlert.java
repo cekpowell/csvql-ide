@@ -15,8 +15,7 @@ public class ErrorAlert extends Alert {
     public ErrorAlert(Exception exception){
         // initializing
         super(AlertType.ERROR, exception.getMessage());
-        this.setTitle("Error");
-        this.setHeaderText("Error");
+        this.init();
     }
 
     /**
@@ -26,18 +25,50 @@ public class ErrorAlert extends Alert {
     public ErrorAlert(String errorMessage){
         // initializing
         super(AlertType.ERROR, errorMessage);
+        this.init();
+    }
+
+    /**
+     * Init method used to set up the ErrorAlert (because there are multiple
+     * constructors).
+     */
+    private void init(){
+
+        /////////////////
+        // CONFIGURING //
+        /////////////////
+
         this.setTitle("Error");
         this.setHeaderText("Error");
     }
 
     /**
-     * Shows the error alert.
+     * Shows an error alert using the provided exception.
      * 
-     * @param owner The current window.
+     * @param owner The window the error alert will be displayed onto.
+     * @param exception The exception that threw the error.
      */
-    public void showWindow(Window owner){
-        this.initOwner(owner);
+    public static void showErrorAlert(Window owner, Exception exception){
+        // creating the error alert
+        ErrorAlert errorAlert = new ErrorAlert(exception);
+        errorAlert.initOwner(owner);
 
-        this.showAndWait();
+        // showing the error alert
+        errorAlert.showAndWait();
+    }
+
+    /**
+     * Shows an error alert using the provided error message.
+     * 
+     * @param owner The window the error alert will be displayed onto.
+     * @param message The exception that threw the error.
+     */
+    public static void showErrorAlert(Window owner, String message){
+        // creating the error alert
+        ErrorAlert errorAlert = new ErrorAlert(message);
+        errorAlert.initOwner(owner);
+
+        // showing the error alert
+        errorAlert.showAndWait();
     }
 }

@@ -32,9 +32,9 @@ public class Terminal extends BorderPane{
         this.csvOutput = new CSVOutput(this);
         this.consoleOutput = new ConsoleOutput(this);
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
         // configuring title label
         SectionTitle titleLabel = new SectionTitle("Terminal");
@@ -51,6 +51,10 @@ public class Terminal extends BorderPane{
         this.setTop(container);
         this.setCenter(this.csvOutput);
     }
+
+    //////////////////////////
+    // CHANGING OUTPUT VIEW //
+    //////////////////////////
 
     /**
      * Displays the TableOutput within the terminal.
@@ -71,5 +75,25 @@ public class Terminal extends BorderPane{
      */
     public void showConsoleOutput(){
         this.setCenter(this.consoleOutput);
+    }
+
+    ////////////////////////////
+    // SHOWING PROGRAM OUTPUT //
+    ////////////////////////////
+
+    /**
+     * displays the provided program output within the terminal views.
+     * 
+     * @param output The program output to be displayed.
+     */
+    public void displayProgramOutput(String output){
+        // Tabular View //
+        // TODO
+
+        // CSV View //
+        this.csvOutput.displayProgramOutput(output);
+
+        // Console View //
+        // TODO
     }
 }

@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 
 import java.io.File;
+import java.util.List;
 
 import Controller.SystemController;
 import View.App.Dashboard;
@@ -33,9 +34,9 @@ public class Editor extends BorderPane{
         this.dashboard = dashboard;
         this.programContainer = new ProgramContainer(this);
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
         // title label
         SectionTitle titleLabel = new SectionTitle("Editor");
@@ -74,16 +75,18 @@ public class Editor extends BorderPane{
             fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSVQL Files", "*.cql"));
 
             // showing the open dialog
-            File selectedFile = fileChooser.showOpenDialog(this.getScene().getWindow());
+            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
 
-            // adding the program to the system
-            if (selectedFile != null) {
-                try{
-                    SystemController.addProgram(selectedFile);
-                }
-                catch(Exception ex){
-                    ErrorAlert errorAlert = new ErrorAlert(ex);
-                    errorAlert.showWindow(this.getScene().getWindow());
+            // adding the file to the filestore if a file was gathered
+            if (selectedFiles != null) {
+                for(File file : selectedFiles){
+                    try{
+                        SystemController.addProgram(file);
+                    }
+                    // handling error
+                    catch(Exception ex){
+                        ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
+                    }
                 }
             }
         });

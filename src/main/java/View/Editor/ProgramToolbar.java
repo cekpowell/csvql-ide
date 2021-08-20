@@ -1,5 +1,7 @@
 package View.Editor;
 
+import Controller.SystemController;
+import View.Tools.ErrorAlert;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -12,6 +14,7 @@ public class ProgramToolbar extends HBox{
     
     // member variables
     private Program program;
+    private Button saveAsButton;
     private Button saveButton;
     private Button undoButton;
     private Button redoButton;
@@ -25,17 +28,18 @@ public class ProgramToolbar extends HBox{
     public ProgramToolbar(Program program){
         // initializing
         this.program = program;
+        this.saveAsButton = new Button("Save As");
         this.saveButton = new Button("Save");
         this.undoButton = new Button("Undo");
         this.redoButton = new Button("Redo");
         this.runButton = new Button("Run");
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
         // container for left side
-        HBox leftContainer = new HBox(this.saveButton, this.undoButton, this.redoButton);
+        HBox leftContainer = new HBox(this.saveAsButton, this.saveButton, this.undoButton, this.redoButton);
         HBox.setHgrow(leftContainer, Priority.ALWAYS);
         leftContainer.setSpacing(10);
 
@@ -54,9 +58,16 @@ public class ProgramToolbar extends HBox{
         // ACTIONS //
         /////////////
 
+        // save as
+        this.saveAsButton.setOnAction((e) -> {
+            // saving the program
+            this.program.saveAs();
+        });
+
         // save
         this.saveButton.setOnAction((e) -> {
-            // TODO
+            // saving the program
+            this.program.save();
         });
 
         // undo
@@ -73,7 +84,13 @@ public class ProgramToolbar extends HBox{
 
         // run
         this.runButton.setOnAction((e) -> {
-            // TODO
+            // running the program
+            try{
+                SystemController.runProgram(this.program);
+            }
+            catch(Exception ex){
+                ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
+            }
         });
     }
 }

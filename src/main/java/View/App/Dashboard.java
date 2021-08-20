@@ -4,6 +4,8 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
+import java.io.File;
+
 import View.Editor.*;
 import View.FileStore.FileStore;
 import View.Terminal.*;
@@ -26,30 +28,30 @@ public class Dashboard extends BorderPane{
      * Class constructor.
      */
     public Dashboard(){
-        // initialising sections
+        // initializing
         this.editor = new Editor(this);
         this.terminal = new Terminal(this);
         this.fileStore = new FileStore(this);
 
-        ////////////////
-        // CONTAINERS //
-        ////////////////
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
-        // editor and outputter container
-        SplitPane editAndOutput = new SplitPane(this.editor,this.terminal);
-        editAndOutput.setDividerPositions(editorDividerRatio);
+        // splitpane for editor and terminal
+        SplitPane editAndTerminal = new SplitPane(this.editor,this.terminal);
+        editAndTerminal.setDividerPositions(editorDividerRatio);
 
-        // filestore container
-        SplitPane editAndOutputAndFilestore = new SplitPane(editAndOutput, this.fileStore);
-        editAndOutputAndFilestore.setDividerPositions(filestoreDividerRatio);
-        editAndOutputAndFilestore.setOrientation(Orientation.VERTICAL);
+        // splitpane for edittor + terminal and filestore
+        SplitPane editAndTerminalAndFileStore = new SplitPane(editAndTerminal, this.fileStore);
+        editAndTerminalAndFileStore.setDividerPositions(filestoreDividerRatio);
+        editAndTerminalAndFileStore.setOrientation(Orientation.VERTICAL);
 
         /////////////////
         // CONFIGURING //
         /////////////////
 
         // adding sections to dashboard
-        this.setCenter(editAndOutputAndFilestore);
+        this.setCenter(editAndTerminalAndFileStore);
     }
 
 
@@ -62,7 +64,11 @@ public class Dashboard extends BorderPane{
         return this.editor;
     }
 
-    public Terminal getOutputter(){
+    public Terminal getTerminal(){
         return this.terminal;
+    }
+
+    public FileStore getFileStore(){
+        return this.fileStore;
     }
 }
