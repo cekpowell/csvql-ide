@@ -7,12 +7,19 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import View.App.Dashboard;
+import View.App.NewProgramForm;
 import View.App.Toolbar;
-import View.Editor.Program;
+import View.Editor.EditorFile;
+import View.Editor.Table;
+import View.Tools.ErrorAlert;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 /**
  * Uses static methods to manage the system.
@@ -20,7 +27,8 @@ import View.Editor.Program;
 public class SystemController {
 
     // constants
-    private static final String interpreter = "csvql";
+    private static final String interpreter = "csvql-no-colour";
+    private static final String cqlExtension = "cql";
     
     // local variables
     private static Toolbar toolbar;
@@ -54,6 +62,63 @@ public class SystemController {
         SystemController.dashboard = dashboard;
     }
 
+    ////////////////////////
+    // CREATING NEW FILES //
+    ////////////////////////
+
+    /**
+     * Displays a pop-up that allows the user to create a new CQL program or table.
+     */
+    public static void createNewFile(){
+        // creating input form
+        NewProgramForm newProgramForm = new NewProgramForm();
+        newProgramForm.initOwner(SystemController.dashboard.getScene().getWindow());
+        newProgramForm.show();
+    }
+
+    ///////////////////
+    // OPENING FILES //
+    ///////////////////
+
+    /**
+     * Displays a pop-up that allows the user to load CQL programs or tables into the
+     * system.
+     */
+    public static void openFile(){
+        // configuring the file chooser to load a new file into the system
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open");
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSVQL Program", "*.cql"),
+                                                 new ExtensionFilter("Table", "*.txt", "*.csv", "*.tsv"));
+
+        // showing the open dialog
+        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(SystemController.dashboard.getScene().getWindow());
+
+        // checking if files were opened
+        if (selectedFiles != null) {
+            // iterating through selected files
+            for(File file : selectedFiles){
+                try{
+                    // CQL Program opened
+                    if(FilenameUtils.getExtension(file.getName()).equals(SystemController.cqlExtension)){
+                        // adding the program to the system
+                        SystemController.loadProgram(file);
+                    }
+
+                    // CSV, TSV or Textfile opened
+                    else{
+                        // adding the table into the system
+                        SystemController.loadTable(file);
+                    }
+                }
+                // handling error
+                catch(Exception ex){
+                    ErrorAlert.showErrorAlert(SystemController.dashboard.getScene().getWindow(), ex);
+                }
+            }
+        }
+    }
+
     /////////////////////
     // ADDING PROGRAMS //
     /////////////////////
@@ -63,17 +128,77 @@ public class SystemController {
      * 
      * @param name The name of the new program
      */
-    public static void addProgram(String name) throws Exception{
-        SystemController.dashboard.getEditor().addProgram(name);
+    public static void createNewProgram(String name) throws Exception{
+        // adding the program into the editor
+        SystemController.dashboard.getEditor().createNewProgram(name);
     }
 
     /**
      * Loads a program into the system from within an existing file.
      * 
-     * @param file The file the program is being loaded from.
+     * @param file The File associated with the CQL program.
      */
-    public static void addProgram(File file) throws Exception{
-        SystemController.dashboard.getEditor().addProgram(file);
+    public static void loadProgram(File file) throws Exception{
+        // adding the program into the editor
+        SystemController.dashboard.getEditor().loadProgram(file);
+    }
+
+    ///////////////////
+    // ADDING TABLES //
+    ///////////////////
+
+    /**
+     * Adds a new table into the editor with the provided name.
+     * 
+     * @param name The name of the new table.
+     */
+    public static void createNewTable(String name) throws Exception{
+        // adding the program into the editor
+        SystemController.dashboard.getEditor().createNewTable(name);
+    }
+
+    /**
+     * Loads the provided table into the system using it's File.
+     * 
+     * @param file The File associated with the table.
+     */
+    public static void loadTable(File file) throws Exception{
+        // adding the table into the editor
+        SystemController.dashboard.getEditor().loadTable(file);
+
+        // adding the table into the tablestore
+        SystemController.dashboard.getTableStore().addTable(file);
+    }
+
+    /**
+     * Adds the provided table to the system table store.
+     * 
+     * @param table The table being added into the table store.
+     * @throws Exception If the the table could not be added.
+     */
+    public static void addTableToStore(Table table) throws Exception{
+        // adding the table into the tablestore
+        SystemController.dashboard.getTableStore().addTable(table.getFile());
+    }
+
+    /**
+     * Adds the provided table into the Editor.
+     * 
+     * @param file The table to be added to the editor.
+     * @throws Exception If the the table could not be added.
+     */
+    public static void addTableToEditor(File file) throws Exception{
+        // adding the table into the editor
+        SystemController.dashboard.getEditor().loadTable(file);
+    }
+
+    /////////////////////
+    // REMOVING TABLES //
+    /////////////////////
+
+    public static void removeTableFromEditor(File file){
+        // removing the table from the editor
+        SystemController.dashboard.getEditor().removeTable(file);
     }
 
     //////////////////////
@@ -87,7 +212,7 @@ public class SystemController {
      * 
      * @throws Exception Thrown if the program could not be run.
      */
-    public static void runProgram(Program program) throws Exception{
+    public static void runProgram(EditorFile program) throws Exception{
         // GATHERINNG NEEDED FILES //
 
         // list to store needed files
@@ -106,7 +231,7 @@ public class SystemController {
         }
 
         // CSV files
-        for(File file : SystemController.dashboard.getFileStore().getFiles()){
+        for(File file : SystemController.dashboard.getTableStore().getFiles()){
             neededFiles.add(file);
         }
 
@@ -149,7 +274,7 @@ public class SystemController {
      * @return the output of the command
      * @throws IOException if an I/O error occurs
      */
-    public static String run(String command) throws IOException
+    public static String runCommand(String command) throws IOException
     {
         ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
         Process process = pb.start();

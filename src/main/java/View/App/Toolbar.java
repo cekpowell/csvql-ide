@@ -3,19 +3,19 @@ package View.App;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-
-import java.io.File;
-import java.util.List;
-
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import Controller.SystemController;
-import View.Tools.ErrorAlert;
 
 /**
  * Represents the main toolbar for the application.
  */
 public class Toolbar extends MenuBar {
+
+    // constants
+    private static final Image fileImage = new Image("file.png");
+    private static final Image openImage = new Image("open.png");
+    private static final Image newImage = new Image("new.png");
 
     // member variables
     private Dashboard dashboard;
@@ -30,9 +30,9 @@ public class Toolbar extends MenuBar {
     public Toolbar(Dashboard dashboard){
         // initializing
         this.dashboard = dashboard;
-        this.file = new Menu("File");
-        this.newProgram = new MenuItem("New Program");
-        this.openProgram = new MenuItem("Open Program");
+        this.file = new Menu("File", new ImageView(fileImage));
+        this.openProgram = new MenuItem("Open", new ImageView(openImage));
+        this.newProgram = new MenuItem("New", new ImageView(newImage));
         this.file.getItems().addAll(this.newProgram, this.openProgram);
 
         /////////////////
@@ -47,34 +47,13 @@ public class Toolbar extends MenuBar {
 
         // New Program
         this.newProgram.setOnAction((e) -> {
-            // creating input form
-            NewProgramForm newProgramForm = new NewProgramForm();
-            newProgramForm.initOwner(this.getScene().getWindow());
-            newProgramForm.show();
+            SystemController.createNewFile();
         });
 
         // Open Program
         this.openProgram.setOnAction((e) -> {
-            // configuring the file chooser to load a new file
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load CSV File");
-            fileChooser.getExtensionFilters().addAll(new ExtensionFilter("CSVQL Files", "*.cql"));
-
-            // showing the open dialog
-            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
-
-            // adding the file to the filestore if a file was gathered
-            if (selectedFiles != null) {
-                for(File file : selectedFiles){
-                    try{
-                        SystemController.addProgram(file);
-                    }
-                    // handling error
-                    catch(Exception ex){
-                        ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
-                    }
-                }
-            }
+            // opening files through the system controller
+            SystemController.openFile();
         });
     }
 }

@@ -4,10 +4,8 @@ import javafx.geometry.Orientation;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
-import java.io.File;
-
 import View.Editor.*;
-import View.FileStore.FileStore;
+import View.TableStore.TableStore;
 import View.Terminal.*;
 
 /**
@@ -22,7 +20,7 @@ public class Dashboard extends BorderPane{
     // member variables
     private Editor editor;
     private Terminal terminal;
-    private FileStore fileStore;
+    private TableStore tableStore;
 
     /**
      * Class constructor.
@@ -31,7 +29,7 @@ public class Dashboard extends BorderPane{
         // initializing
         this.editor = new Editor(this);
         this.terminal = new Terminal(this);
-        this.fileStore = new FileStore(this);
+        this.tableStore = new TableStore(this);
 
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
@@ -42,7 +40,7 @@ public class Dashboard extends BorderPane{
         editAndTerminal.setDividerPositions(editorDividerRatio);
 
         // splitpane for edittor + terminal and filestore
-        SplitPane editAndTerminalAndFileStore = new SplitPane(editAndTerminal, this.fileStore);
+        SplitPane editAndTerminalAndFileStore = new SplitPane(editAndTerminal, this.tableStore);
         editAndTerminalAndFileStore.setDividerPositions(filestoreDividerRatio);
         editAndTerminalAndFileStore.setOrientation(Orientation.VERTICAL);
 
@@ -68,7 +66,7 @@ public class Dashboard extends BorderPane{
         return this.terminal;
     }
 
-    public FileStore getFileStore(){
-        return this.fileStore;
+    public TableStore getTableStore(){
+        return this.tableStore;
     }
 }

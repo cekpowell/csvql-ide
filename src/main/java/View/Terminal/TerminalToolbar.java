@@ -1,80 +1,97 @@
 package View.Terminal;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.Separator;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 /**
- * Toolbar for editing programs within the IDE.
+ * Toolbar placed at the top of each output view.
  */
-public class TerminalToolbar extends FlowPane{
+public class TerminalToolbar extends HBox{
+
+    // constants
+    private static final Image saveAsImage = new Image("save-as.png");
+    private static final Image zoomInImage = new Image("zoom-in.png");
+    private static final Image zoomOutImage = new Image("zoom-out.png");
+    private static final Image copyImage = new Image("copy.png");
     
     // member variables
     private Terminal terminal;
-    private ToggleGroup outputFormat;
-    private ToggleButton tableButton;
-    private ToggleButton csvButton;
-    private ToggleButton consoleButton;
+    private Button saveAsButton;
+    private Button zoomInButton;
+    private Button zoomOutButton;
+    private Button copyButton;
+    
 
     /**
      * Class constructor.
      * 
-     * @param programEditor The editor associated with this toolbar.
+     * @param outputPanel The output panel associated with this toolbar.
      */
     public TerminalToolbar(Terminal terminal){
         // initializing
         this.terminal = terminal;
-        this.outputFormat = new ToggleGroup();
-        this.tableButton = new ToggleButton("Table");
-        this.csvButton = new ToggleButton("CSV");
-        this.consoleButton = new ToggleButton("Console");
+        this.saveAsButton = new Button("", new ImageView(saveAsImage));
+        this.zoomInButton = new Button("", new ImageView(zoomInImage));
+        this.zoomOutButton = new Button("", new ImageView(zoomOutImage));
+        this.copyButton = new Button("", new ImageView(copyImage));
 
-        // Configuring Member Variables //
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
 
-        // disabling table and console
-        this.tableButton.setDisable(true);
-        this.consoleButton.setDisable(true);
+        // seperators for content
+        Separator saveSep = new Separator(Orientation.VERTICAL);
+        Separator undoRedoSep = new Separator(Orientation.VERTICAL);
 
-        // configuriing toggle group
-        this.tableButton.setToggleGroup(this.outputFormat);
-        this.csvButton.setToggleGroup(this.outputFormat);
-        this.consoleButton.setToggleGroup(this.outputFormat);
-        this.outputFormat.selectToggle(this.csvButton);
+        // container for left side
+        HBox leftContainer = new HBox(this.saveAsButton, saveSep, this.zoomInButton, this.zoomOutButton);
+        HBox.setHgrow(leftContainer, Priority.ALWAYS);
+        leftContainer.setSpacing(10);
+
+        // container for right side
+        HBox rightContainer = new HBox(this.copyButton);
+        HBox.setHgrow(rightContainer, Priority.ALWAYS);
+        rightContainer.setAlignment(Pos.TOP_RIGHT);
 
         /////////////////
         // CONFIGURING //
         /////////////////
-
-        // adding controls to toolbar
-        this.getChildren().addAll(this.tableButton, this.csvButton, this.consoleButton);
-
-        // configuring the toolbar
-        this.setOrientation(Orientation.HORIZONTAL);
-        this.setAlignment(Pos.CENTER);
-        this.setHgap(10);
+        
+        // adding content
+        this.getChildren().addAll(leftContainer, rightContainer);
+        this.setPadding(new Insets(10));
 
         /////////////
         // ACTIONS //
         /////////////
 
-        // table
-        this.tableButton.setOnAction((e) -> {
-            // displaying the TableOutput
-            this.terminal.showTableOutput();
+        // save as
+        this.saveAsButton.setOnAction((e) -> {
+            // saving the program
+            // TODO
         });
 
-        // CSV
-        this.csvButton.setOnAction((e) -> {
-            // displaying the TableOutput
-            this.terminal.showCsvOutput();
+        // zoom in
+        this.zoomInButton.setOnAction((e) -> {
+            // TODO
         });
 
-        // console
-        this.consoleButton.setOnAction((e) -> {
-            // displaying the TableOutput
-            this.terminal.showConsoleOutput();
+        // zoom out
+        this.zoomOutButton.setOnAction((e) -> {
+            // TODO
+        });
+
+        // copy
+        this.copyButton.setOnAction((e) -> {
+            // running the file
+            // TODO
         });
     }
 }
