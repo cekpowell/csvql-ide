@@ -220,6 +220,36 @@ public class FileContainer extends TabPane{
         this.removeTable(matchedTable);
     }
 
+    /////////////
+    // HELPERS //
+    /////////////
+
+    /**
+     * Determines if any files present in container have usaved changes.
+     * 
+     * @return True if at least one file within the container has unsaved changes.
+     */
+    public boolean hasUnsavedFiles(){
+        // checking open programs
+        for(EditorFile editorFile : this.programs){
+            if(editorFile.hasUnsavedChanges()){
+                // returning true if file with unsaved changes found
+                return true;
+            }
+        }
+
+        // checking open tables
+        for(EditorFile editorFile : this.tables){
+            if(editorFile.hasUnsavedChanges()){
+                // returning true if file with unsaved changes found
+                return true;
+            }
+        }
+
+        // no unsaved changes found - returning false
+        return false;
+    }
+
 
     /////////////////////////
     // GETTERS AND SETTERS //
@@ -232,5 +262,13 @@ public class FileContainer extends TabPane{
 
     public void setCurrentEditorFile(EditorFile editorFile){
         this.currentEditorFile = editorFile;
+    }
+
+    public ArrayList<Program> getPrograms(){
+        return this.programs;
+    }
+
+    public ArrayList<Table> getTables(){
+        return this.tables;
     }
 }

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import Controller.SystemController;
 import View.App.Dashboard;
 import View.App.Toolbar;
+import View.Tools.ConfirmationWindow;
 
 /**
  * Main class for the application.
@@ -55,6 +56,22 @@ public class Main extends Application{
 
         // configuring the stage
         stage.setScene(scene);
+
+        // addding event handler to stage
+        stage.setOnCloseRequest((e) ->{
+            // testing for unsaved editor tabs
+            if(dashboard.getEditor().hasUnsavedFiles()){
+                // confirming the close
+                boolean confirmClosed = ConfirmationWindow.showConfirmationWindow(dashboard.getScene().getWindow(), 
+                                                                                "Close Application", 
+                                                                                "Are you sure you want to close without saving?");
+
+                // consuming the event if the close was not confirmed
+                if(!confirmClosed){
+                    e.consume();
+                }
+            }
+        });
 
         // loading the stage
         stage.setTitle(titleName + " by " + authorName);

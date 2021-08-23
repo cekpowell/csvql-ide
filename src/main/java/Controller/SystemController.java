@@ -153,6 +153,13 @@ public class SystemController {
      * @param name The name of the new table.
      */
     public static void createNewTable(String name) throws Exception{
+        // making sure no tables in the store have this name already
+        for(File table : dashboard.getTableStore().getFiles()){
+            if(table.getName().equals(name)){
+                throw new Exception("There is already a table in the store with this name!");
+            }
+        }
+
         // adding the program into the editor
         SystemController.dashboard.getEditor().createNewTable(name);
     }
@@ -163,9 +170,11 @@ public class SystemController {
      * @param file The File associated with the table.
      */
     public static void loadTable(File file) throws Exception{
-        // making sure the table is not already in the system
-        if(SystemController.dashboard.getTableStore().getFiles().contains(file)){
-            throw new Exception("There is already a table in the store with this name!");
+        // making sure no tables in the store have this name already
+        for(File table : dashboard.getTableStore().getFiles()){
+            if(table.getName().equals(file.getName())){
+                throw new Exception("There is already a table in the store with this name!");
+            }
         }
 
         // adding the table into the editor
@@ -204,6 +213,36 @@ public class SystemController {
     public static void removeTableFromEditor(File file){
         // removing the table from the editor
         SystemController.dashboard.getEditor().removeTable(file);
+    }
+
+    ////////////////////
+    // RENAMING FILES //
+    ////////////////////
+
+    /**
+     * Attempts to rename a file within the system.
+     * 
+     * @param type The type of file being renamed.
+     * @param initialName The initial name of the file.
+     * @param newName The new name of the file.
+     * 
+     * @param Exception If the file could not be renamed.
+     */
+    public static void renameSelectedEditoFile(String newName) throws Exception{
+        // making sure no tables in the store have this name
+        for(File file : dashboard.getTableStore().getFiles()){
+            if(file.getName().equals(newName)){
+                throw new Exception("There is already a table in the store with this name!");
+            }
+        }
+
+        // making sure no open editors have this name
+        if(dashboard.getEditor().editorFileAlreadyHasName(newName)){
+            throw new Exception("There is already a file with this name in the editor!");
+        }
+
+        // renaming the current editor file
+        SystemController.dashboard.getEditor().getSelectedEditorFile().rename(newName);
     }
 
     //////////////////////

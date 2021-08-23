@@ -166,8 +166,51 @@ public class Editor extends BorderPane{
         this.fileContainer.removeTable(file);
     }
 
+    ////////////
+    // HELPERS //
+    ////////////
+
+    /**
+     * Determines if the editor currently has unsaved files opened.
+     * 
+     * @return True if the editor has unsaved files open, false if not.
+     */
+    public boolean hasUnsavedFiles(){
+        // running the method on the file container
+        return this.fileContainer.hasUnsavedFiles();
+    }
+
+
+    /**
+     * Determines if an open editor file already has the name provided.
+     * 
+     * @param name The name being checked for.
+     * @return True if an open editor file has the name, false if not.
+     */
+    public boolean editorFileAlreadyHasName(String name){
+        // checking open programs
+        for(Program program : this.fileContainer.getPrograms()){
+            if(program.getFile().getName().equals(name)){
+                return true;
+            }
+        }
+
+        // checking open tables
+        for(Table table : this.fileContainer.getTables()){
+            if(table.getFile().getName().equals(name)){
+                return true;
+            }
+        }
+
+        // no matches, returning false
+        return false;
+    }
 
     /////////////////////////
     // GETTERS AND SETTERS //
     /////////////////////////
+
+    public EditorFile getSelectedEditorFile(){
+        return this.fileContainer.getCurrentEditorFile();
+    }
 }

@@ -59,13 +59,13 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
       // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
       state.tokenize = tokenLiteral(ch);
       return state.tokenize(stream, state);
-    } else if ((((support.nCharCast && (ch == "n" || ch == "N")) // TODO
+    } else if ((((support.nCharCast && (ch == "n" || ch == "N"))
         || (support.charsetCast && ch == "_" && stream.match(/[a-z][a-z0-9]*/i)))
         && (stream.peek() == "'" || stream.peek() == '"'))) {
       // charset casting: _utf8'str', N'str', n'str'
       // ref: http://dev.mysql.com/doc/refman/5.5/en/string-literals.html
       return "keyword";
-    } else if (support.escapeConstant && (ch == "e" || ch == "E") //TODO
+    } else if (support.escapeConstant && (ch == "e" || ch == "E") 
         && (stream.peek() == "'" || (stream.peek() == '"' && support.doubleQuote))) {
       // escape constant: E'str', e'str'
       // ref: https://www.postgresql.org/docs/current/sql-syntax-lexical.html#SQL-SYNTAX-STRINGS-ESCAPE
@@ -242,7 +242,7 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
     // @@prefix.varName @varName
     // varName can be quoted with ` or ' or "
     // ref: http://dev.mysql.com/doc/refman/5.5/en/user-variables.html
-    if (stream.eat("@")) {
+    if (stream.eat("LET")) {
       stream.match('session.');
       stream.match('local.');
       stream.match('global.');
@@ -290,7 +290,8 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
   CodeMirror.defineMIME("text/x-csvql", {
     name: "sql",
     keywords: set("SETUP LET READ RETURN SELECT FROM WHERE DELETE UPDATE TO ON INSERT VALUES COLUMN INTO UNION INTERSECTION DIFFERENCE JOIN ON INNER LEFT RIGHT OUTER FULL MERGE KEEPING ORDER IN ASC DESC BY LIMIT OFFSET LAST UNIQUE TRANSPOSE INDEX NOT AND OR"),
-    builtin: set("string"),
+    builtin: set("PRETTYPRINT INPUTDELIM OUTPUTDELIM"),
+    atoms: {"variable": true},
     operatorChars: /^[<>.!=@+-/*%]/,
     brackets: /^[\{}\(\)]/,
     support: set("doubleQuote"),

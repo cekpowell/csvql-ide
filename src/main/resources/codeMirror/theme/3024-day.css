@@ -27,6 +27,7 @@
 
 .cm-s-3024-day span.cm-property, .cm-s-3024-day span.cm-attribute { color: #01a252; }
 .cm-s-3024-day span.cm-keyword { color: #db2d20; }
+.cm-s-3024-day span.cm-builtin {color: #30a;}
 .cm-s-3024-day span.cm-string { color: #01a252; }
 
 .cm-s-3024-day span.cm-variable { color: #01a252; }
@@ -37,5 +38,5 @@
 .cm-s-3024-day span.cm-link { color: #a16a94; }
 .cm-s-3024-day span.cm-error { background: #db2d20; color: #5c5855; }
 
-.cm-s-3024-day .CodeMirror-activeline-background { background: #e8f2ff; }
+.cm-s-3024-day .CodeMirror-activeline-background { background: #3686f0; }
 .cm-s-3024-day .CodeMirror-matchingbracket { text-decoration: underline; color: #a16a94 !important; }

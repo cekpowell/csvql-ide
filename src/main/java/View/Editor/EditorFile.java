@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javafx.geometry.Insets;
@@ -227,44 +231,56 @@ public abstract class EditorFile extends Tab{
             }
         });
 
-        // Channges to code
+        // Key released
         this.codeEditor.setOnKeyReleased((e) -> {
-            if(!(this.file == null)) {
-                // text has changed
-                if(!this.textAtLastSave.equals(this.codeEditor.getCode())){
-                    // there are no unsaved changes yet - need to update tab information
-                    if(!this.unsavedChanges){
-                        this.unsavedChanges = true;
-                        this.setText(this.name + unsavedLabel);
+            // checking for changes to code
+            this.checkForChanges();
+        });
+    }
 
-                        // setting tab graphic 
-                        if(this.type == EditorFileType.PROGRAM){
-                            this.setGraphic(new ImageView(programUnsavedImage));
-                        }
-                        else{
-                            this.setGraphic(new ImageView(tableUnsavedImage));
-                        }
+    //////////////////////////
+    // CHECKING FOR CHANGES //
+    //////////////////////////
+
+    /**
+     * Checks the editor's CodeEditor to see if there have been any changes to the text since the last save.
+     */
+    public void checkForChanges(){
+        if(!(this.file == null)) { // if there is no file, it must be unsaved, so no need to check
+            // text has changed
+            if(!this.textAtLastSave.equals(this.codeEditor.getCode())){
+                // there are no unsaved changes yet - need to update tab information
+                if(!this.unsavedChanges){
+                    this.unsavedChanges = true;
+                    this.setText(this.name + unsavedLabel);
+
+                    // setting tab graphic 
+                    if(this.type == EditorFileType.PROGRAM){
+                        this.setGraphic(new ImageView(programUnsavedImage));
                     }
-                }
-                // text has gone back to last save
-                else{
-                        // there were previously unsaved changes - need to update tab information
-                        if(this.unsavedChanges){
-                            // upudating tab information
-                            this.unsavedChanges = false;
-                            this.setText(this.name);
-
-                            // setting tab graphic 
-                            if(this.type == EditorFileType.PROGRAM){
-                                this.setGraphic(new ImageView(programImage));
-                            }
-                            else{
-                                this.setGraphic(new ImageView(tableImage));
-                            }
+                    else{
+                        this.setGraphic(new ImageView(tableUnsavedImage));
                     }
                 }
             }
-        });
+            // text has gone back to last save
+            else{
+                    // there were previously unsaved changes - need to update tab information
+                    if(this.unsavedChanges){
+                        // upudating tab information
+                        this.unsavedChanges = false;
+                        this.setText(this.name);
+
+                        // setting tab graphic 
+                        if(this.type == EditorFileType.PROGRAM){
+                            this.setGraphic(new ImageView(programImage));
+                        }
+                        else{
+                            this.setGraphic(new ImageView(tableImage));
+                        }
+                }
+            }
+        }
     }
 
     //////////////////////////
@@ -424,22 +440,44 @@ public abstract class EditorFile extends Tab{
         return fileChooser.showSaveDialog(this.fileContainer.getScene().getWindow());
     }
 
-    /////////////
-    // ZOOMING //
-    /////////////
+    //////////////
+    // RENAMING //
+    //////////////
 
     /**
-     * Zooms in to the editor.
+     * Attempts to rename the editor file.
+     * 
+     * @param newName The new name of the file.
+     * 
+     * @throws Exception If the file could not be renamed.
      */
-    public void zoomIn(){
-        // TODO
-    }
+    public void rename(String newName) throws Exception{
+        // attempting to rename the file
+        try{
+            // getting path to current file
+            Path source = Paths.get(this.file.getAbsolutePath());
 
-    /**
-     * Zooms-out of the editor.
-     */
-    public void zoomOut(){
-        // TODO
+            // renaming the file
+            Path newPath = Files.move(source, source.resolveSibling(newName));
+
+            // updating the file property
+            this.file = newPath.toFile();
+
+            // updating the tab information
+            this.name = newName;
+            if(this.unsavedChanges){
+                this.setText(newName + unsavedLabel);
+            }
+            else{
+                this.setText(newName);
+            }
+        }
+        catch(FileAlreadyExistsException e){
+            throw new Exception("A file with this name already exists in the directory!");
+        }
+        catch(Exception e){
+            throw new Exception("Unable to rename file.\n" + e.getMessage());
+        }
     }
 
     /////////////
@@ -447,7 +485,8 @@ public abstract class EditorFile extends Tab{
     /////////////
 
     /**
-     * Runs the EditorFile (if it is runnable).
+     * Runs the EditorFile (if it is runnable). Implemented by the specific type of 
+     * editor file.
      */
     public abstract void run();
 
@@ -469,6 +508,10 @@ public abstract class EditorFile extends Tab{
 
     public File getFile(){
         return this.file;
+    }
+
+    public boolean hasUnsavedChanges(){
+        return this.unsavedChanges;
     }
 
     //////////////////////
