@@ -163,6 +163,11 @@ public class SystemController {
      * @param file The File associated with the table.
      */
     public static void loadTable(File file) throws Exception{
+        // making sure the table is not already in the system
+        if(SystemController.dashboard.getTableStore().getFiles().contains(file)){
+            throw new Exception("There is already a table in the store with this name!");
+        }
+
         // adding the table into the editor
         SystemController.dashboard.getEditor().loadTable(file);
 

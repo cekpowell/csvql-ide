@@ -75,23 +75,25 @@ public class TerminalToolbar extends HBox{
         // save as
         this.saveAsButton.setOnAction((e) -> {
             // saving the program
-            // TODO
+            this.terminal.saveTerminalContent();
         });
 
         // zoom in
         this.zoomInButton.setOnAction((e) -> {
-            // TODO
+            // zooming in on the terminal
+            this.terminal.getCodeEditor().zoomIn();
         });
 
         // zoom out
         this.zoomOutButton.setOnAction((e) -> {
-            // TODO
+            // zooming out of the terminal
+            this.terminal.getCodeEditor().zoomOut();
         });
 
         // copy
         this.copyButton.setOnAction((e) -> {
-            // running the file
-            // TODO
+            // copying the output
+            this.terminal.copyTerminalContent();
         });
     }
 }

@@ -33,7 +33,7 @@ public class TableStore extends VBox{
     private Dashboard dashboard;
     private FlowPane tableContainer;
     private ArrayList<Table> tables;
-    private Button openTableButton;
+    private Button loadTableButton;
     private ConfirmationButton clearStoreButton;
 
     /**
@@ -46,7 +46,7 @@ public class TableStore extends VBox{
         this.dashboard = dashboard;
         this.tableContainer = new FlowPane();
         this.tables = new ArrayList<Table>();
-        this.openTableButton = new Button("Open Table", new ImageView(openImage));
+        this.loadTableButton = new Button("Load Table", new ImageView(openImage));
         this.clearStoreButton = new ConfirmationButton("Clear Store", new ImageView(closeImage),
                                                        "Clear Table Store", 
                                                        "Are you sure you want to remove all loaded tables from the system? " + "\n" +
@@ -74,7 +74,7 @@ public class TableStore extends VBox{
         HBox.setHgrow(titleContainer, Priority.ALWAYS);
 
         // container for load file button
-        HBox buttonContainer = new HBox(this.openTableButton, this.clearStoreButton);
+        HBox buttonContainer = new HBox(this.loadTableButton, this.clearStoreButton);
         buttonContainer.setSpacing(10);
         buttonContainer.setAlignment(Pos.TOP_RIGHT);
 
@@ -98,7 +98,7 @@ public class TableStore extends VBox{
         /////////////
 
          // action for load file button
-         this.openTableButton.setOnAction((e) -> {
+         this.loadTableButton.setOnAction((e) -> {
             // configuring the file chooser to load a new file
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Load CSV File");

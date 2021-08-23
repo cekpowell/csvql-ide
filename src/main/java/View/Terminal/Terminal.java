@@ -3,13 +3,25 @@ package View.Terminal;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import View.App.Dashboard;
+import View.Editor.EditorFile.EditorFileType;
+import View.Tools.CodeEditor;
+import View.Tools.ErrorAlert;
 import View.Tools.SectionTitle;
 
 /**
@@ -17,15 +29,44 @@ import View.Tools.SectionTitle;
  */
 public class Terminal extends BorderPane{
 
-    // constants
+    // constants 
+    private static final String resourcesPath = Terminal.class.getClassLoader().getResource("codeMirror/").toString();
+    private static final String codeMirrorTemplate = 
+                                                        "<!doctype html>" +
+                                                        "<html>" +
+                                                        "<head>" +
+                                                        "   <script src=\"" + resourcesPath + "/lib/codemirror.js\"></script>" + 
+                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "lib/codemirror.css\">" + 
+                                                        "   <script src=\"" + resourcesPath + "/mode/mathematica/mathematica.js\"></script>" + 
+                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "theme/3024-day.css\">" +
+                                                        "</head>" +
+                                                        "<body style='margin: 0', bgcolor=#ffffff>" +
+                                                        "<form><textarea id=\"code\" name=\"code\">\n" +
+                                                        "${code}" +
+                                                        "</textarea></form>" +
+                                                        "<script>" +
+                                                        "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
+                                                        "    mode: \"\"," + // no syntax for tables
+                                                        "    lineNumbers: true," +
+                                                        "    styleActiveLine: true," +
+                                                        "    styleActiveSelected: true," + 
+                                                        "    readOnly: true," + 
+                                                        "    theme: \"3024-day\"," + 
+                                                        "  });" +
+                                                        "</script>" +
+                                                        "</body>" +
+                                                        "</html>";
     private static final Image terminalImage = new Image("terminal.png");
     private static final Image messageImage = new Image("message.png");
     private static final Image errorImage = new Image("error.png");
+    private static final KeyCombination keyCombCtrS = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrPlus = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrMinus = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN);
 
     // member variables
     private Dashboard dashboard;
     private TerminalToolbar terminalToolbar;
-    private TextArea textArea;
+    private CodeEditor codeEditor;
 
     /**
      * Class constructor.
@@ -36,11 +77,7 @@ public class Terminal extends BorderPane{
         // initializing
         this.dashboard = dashboard;
         this.terminalToolbar = new TerminalToolbar(this);
-        this.textArea = new TextArea();
-
-        // Configuring member variables //
-
-        this.terminalToolbar.setDisable(true);
+        this.codeEditor = new CodeEditor(Terminal.codeMirrorTemplate, "");
 
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
@@ -49,8 +86,8 @@ public class Terminal extends BorderPane{
         // configuring title label
         SectionTitle titleLabel = new SectionTitle("Terminal", new ImageView(terminalImage));
 
-        // container for title and toolbar
-        VBox container = new VBox(titleLabel, this.terminalToolbar);
+        // container for title 
+        VBox container = new VBox(titleLabel);
         container.setPadding(new Insets(10));
 
         /////////////////
@@ -60,6 +97,29 @@ public class Terminal extends BorderPane{
         // adding controls to the editor
         this.setTop(container);
         this.displayNoOutputScreen();
+
+        /////////////
+        // ACTIONS //
+        /////////////
+
+        // Shortcuts
+        this.codeEditor.setOnKeyPressed((e) -> {
+            // CTRL + S 
+            if(keyCombCtrS.match(e)){
+                // saving file
+                this.saveTerminalContent();
+            }
+            // CTRL + PLUS
+            else if(keyCombCtrPlus.match(e)){
+                // performing zoom-in
+                this.codeEditor.zoomIn();;
+            }
+            // CTRL + MINUS
+            else if(keyCombCtrMinus.match(e)){
+                // performing zoom-out
+                this.codeEditor.zoomOut();;
+            }
+        });
     }
 
     //////////////////////
@@ -106,13 +166,13 @@ public class Terminal extends BorderPane{
         }
         else{
             // setting the text area text
-            this.textArea.setText(output);
+            this.codeEditor.setCode(output);
 
-            // enabling output toolbar
-            this.terminalToolbar.setDisable(false);
+            // creating container for toolbar and code editor
+            VBox container = new VBox(this.terminalToolbar, this.codeEditor);
 
-            // displaying the text area 
-            this.setCenter(this.textArea);
+            // displaying the container
+            this.setCenter(container);
         }
     }
 
@@ -165,8 +225,95 @@ public class Terminal extends BorderPane{
 
         // setting container into panel
         this.setCenter(container);
+    }
 
-        // disabling toolbar
-        this.terminalToolbar.setDisable(true);
+    ////////////
+    // SAVING //
+    ////////////
+
+    /**
+     * Saves the terminal content into a new file.
+     */
+    public void saveTerminalContent(){
+        // getting the file to save the program to
+        File chosenFile = this.getSaveFile();
+
+        if(chosenFile != null){
+            try{
+                // saving program
+                this.writeContentToFile(chosenFile);
+            }
+            // handling error
+            catch (Exception e) {
+                ErrorAlert.showErrorAlert(this.getScene().getWindow(), e);
+            }
+        }
+    }
+
+    /**
+     * Writes the content of the EditorFile into the provided File.
+     * 
+     * @param file The File the EditorFile is being written into.
+     * @return True if the file was writen, false if not.
+     */
+    private void writeContentToFile(File file){
+        try {
+            // content to save
+            String saveContent = this.codeEditor.getCode();
+
+            // writing save content to file
+            OutputStream out = new FileOutputStream(file);
+            out.write(saveContent.getBytes());
+            out.close();
+        }
+        // handling error
+        catch (Exception e) {
+            ErrorAlert.showErrorAlert(this.getScene().getWindow(), e);
+        }
+    }
+
+    /**
+     * Helper method to save an EditorFile that has not yet been saved. Opens
+     * a file choser dialog and allows the user to select where the EditorFile will
+     * be saved.
+     * 
+     * @param initialFilename The initial name of the file being saved.
+     * @return The selected file if one was chosen, null if it was not.
+     */
+    private File getSaveFile(){
+        // setting up the file choser
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName("Output");
+        fileChooser.getExtensionFilters().addAll(EditorFileType.TABLE.getExtensionFilter());
+
+        // showing the saving dialog
+        return fileChooser.showSaveDialog(this.getScene().getWindow());
+    }
+
+    /////////////
+    // COPYING //
+    /////////////
+
+    /**
+     * Copies the Terminal's content to the system clipboard
+     */
+    public void copyTerminalContent(){
+        // setting up clipboard
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+
+        // getting terminal content
+        content.putString(this.codeEditor.getCode());
+
+        // putting terminal content into system clipboard
+        clipboard.setContent(content);
+    }
+
+    /////////////////////////
+    // GETTERS AND SETTERS //
+    /////////////////////////
+
+    public CodeEditor getCodeEditor(){
+        return this.codeEditor;
     }
 }

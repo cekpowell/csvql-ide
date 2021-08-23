@@ -10,6 +10,38 @@ import View.Tools.ErrorAlert;
  */
 public class Program extends EditorFile{
 
+    // constants
+    private static final String resourcesPath = Program.class.getClassLoader().getResource("codeMirror/").toString();
+    private static final String codeMirrorTemplate = 
+                                                        "<!doctype html>" +
+                                                        "<html>" +
+                                                        "<head>" +
+                                                        "   <script src=\"" + resourcesPath + "/lib/codemirror.js\"></script>" + 
+                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "lib/codemirror.css\">" + 
+                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "theme/3024-day.css\">" + 
+                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "hint/show-hint.css\">" + 
+                                                        "   <script src=\"" + resourcesPath + "/hint/show-hint.js\"></script>" + 
+                                                        "   <script src=\"" + resourcesPath + "/hint/sql-hint.js\"></script>" + 
+                                                        "   <script src=\"" + resourcesPath + "/mode/sql/sql.js\"></script>" + 
+                                                        "</head>" +
+                                                        "<body style='margin: 0', bgcolor=#ffffff>" +
+                                                        "<form><textarea id=\"code\" name=\"code\">\n" +
+                                                        "${code}" +
+                                                        "</textarea></form>" +
+                                                        "<script>" +
+                                                        "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
+                                                        "    mode: \"text/x-csvql\"," + 
+                                                        "    lineNumbers: true," +
+                                                        "    spellcheck: true," +
+                                                        "    styleActiveLine: {nonEmpty: true}," +
+                                                        "    styleActiveSelected: true," + 
+                                                        "    theme: \"3024-day\"," + 
+                                                        "    extraKeys: {\"Ctrl-Space\": \"autocomplete\"}" + 
+                                                        "  });" +
+                                                        "</script>" +
+                                                        "</body>" +
+                                                        "</html>";
+
     /**
      * Class constructor.
      * 
@@ -17,7 +49,7 @@ public class Program extends EditorFile{
      * @param name The name of the program.
      */
     public Program(FileContainer fileContainer, String name){
-        super(EditorFileType.PROGRAM, fileContainer, name);
+        super(EditorFileType.PROGRAM, fileContainer, name, Program.codeMirrorTemplate);
     }
 
     /**
@@ -27,7 +59,7 @@ public class Program extends EditorFile{
      * @param file The file associated with the program.
      */
     public Program(FileContainer fileContainer, File file){
-        super(EditorFileType.PROGRAM, fileContainer, file);
+        super(EditorFileType.PROGRAM, fileContainer, file, Program.codeMirrorTemplate);
     }
 
     /**

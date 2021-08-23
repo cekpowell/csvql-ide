@@ -4,7 +4,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Separator;
-import javafx.scene.effect.SepiaTone;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -103,23 +102,25 @@ public class EditorFileToolbar extends HBox{
         // undo
         this.undoButton.setOnAction((e) -> {
             // undoing the last action in the text area
-            this.editorFile.getTextArea().undo();
+            this.editorFile.getCodeEditor().undo();
         });
 
         // redo
         this.redoButton.setOnAction((e) -> {
             // redoing the last action in the text area
-            this.editorFile.getTextArea().redo();
+            this.editorFile.getCodeEditor().redo();
         });
 
         // zoom in
         this.zoomInButton.setOnAction((e) -> {
-    
+            // performing zoom in
+            this.editorFile.getCodeEditor().zoomIn();
         });
 
         // zoom out
         this.zoomOutButton.setOnAction((e) -> {
-
+            // performing zoom-out
+            this.editorFile.getCodeEditor().zoomOut();
         });
 
         // run

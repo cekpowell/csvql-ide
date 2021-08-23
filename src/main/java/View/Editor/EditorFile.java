@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
-import Controller.SystemController;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -17,6 +17,9 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+
+import Controller.SystemController;
+import View.Tools.CodeEditor;
 import View.Tools.ConfirmationWindow;
 import View.Tools.ErrorAlert;
 
@@ -33,6 +36,10 @@ public abstract class EditorFile extends Tab{
     private static final String unsavedLabel = "(Unsaved)";
     private static final KeyCombination keyCombCtrS = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination keyCombCtrR = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrZ = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrShiftZ = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_ANY, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrPlus = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN);
+    private static final KeyCombination keyCombCtrMinus = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN);
     
     // member variables
     private EditorFileType type;
@@ -40,7 +47,7 @@ public abstract class EditorFile extends Tab{
     private File file;
     private String name;
     private EditorFileToolbar toolbar;
-    private TextArea textArea;
+    private CodeEditor codeEditor;
     private String textAtLastSave;
     private boolean unsavedChanges;
 
@@ -50,12 +57,12 @@ public abstract class EditorFile extends Tab{
      * @param fileContainer The FileContainer associated with this EditorFile.
      * @param name The name of the EditorFile.
      */
-    public EditorFile(EditorFileType type, FileContainer fileContainer, String name){
+    public EditorFile(EditorFileType type, FileContainer fileContainer, String name, String codeMirrorTemplate){
         // initializing
         this.file = null;
         this.name = name;
         this.toolbar = new EditorFileToolbar(this, type);
-        this.textArea = new TextArea();
+        this.codeEditor = new CodeEditor(codeMirrorTemplate, "");
         this.textAtLastSave = new String();
         this.unsavedChanges = true;
         this.init(type, fileContainer);
@@ -84,14 +91,14 @@ public abstract class EditorFile extends Tab{
      * @param file The File object associated with the file.
      * @param runnable Boolean representing if the file is runable or not.
      */
-    public EditorFile(EditorFileType type, FileContainer fileContainer, File file){
+    public EditorFile(EditorFileType type, FileContainer fileContainer, File file, String codeMirrorTemplate){
         // initializing
         this.type = type;
         this.fileContainer = fileContainer;
         this.file = file;
         this.name = file.getName();
         this.toolbar = new EditorFileToolbar(this, type);
-        this.textArea = new TextArea();
+        this.codeEditor = new CodeEditor(codeMirrorTemplate, "");
         this.unsavedChanges = false;
 
         // Configuring Member Variables //
@@ -109,7 +116,7 @@ public abstract class EditorFile extends Tab{
             String content = this.getFileContent();
             
             // setting the text area
-            this.textArea.setText(content);
+            this.codeEditor.setCode(content);
 
             // setting the text at last save
             this.textAtLastSave = content;
@@ -143,7 +150,7 @@ public abstract class EditorFile extends Tab{
 
         BorderPane container = new BorderPane();
         container.setTop(this.toolbar);
-        container.setCenter(this.textArea);
+        container.setCenter(this.codeEditor);
 
         /////////////////
         // CONFIGURING //
@@ -186,8 +193,8 @@ public abstract class EditorFile extends Tab{
             }
         });
 
-        // Key Pressed
-        this.textArea.setOnKeyPressed((e) -> {
+        // Shortcuts
+        this.codeEditor.setOnKeyPressed((e) -> {
             // CTRL + S 
             if(keyCombCtrS.match(e)){
                 // saving file
@@ -198,44 +205,66 @@ public abstract class EditorFile extends Tab{
                 // running file
                 this.run();
             }
+            // CTRL + Z
+            else if(keyCombCtrZ.match(e)){
+                // performing undo
+                this.codeEditor.undo();
+            }
+            // CTRL + SHIFT + Z
+            else if(keyCombCtrShiftZ.match(e)){
+                // performing redo
+                this.codeEditor.redo();
+            }
+            // CTRL + PLUS
+            else if(keyCombCtrPlus.match(e)){
+                // performing zoom-in
+                this.codeEditor.zoomIn();;
+            }
+            // CTRL + MINUS
+            else if(keyCombCtrMinus.match(e)){
+                // performing zoom-out
+                this.codeEditor.zoomOut();;
+            }
         });
 
-        // Text area text changed
-        this.textArea.textProperty().addListener((e) -> {
-            // text has changed
-            if(!this.textAtLastSave.equals(this.textArea.getText())){
-                // there are no unsaved changes yet - need to update tab information
-                if(!this.unsavedChanges){
-                    this.unsavedChanges = true;
-                    this.setText(this.name + unsavedLabel);
+        // Channges to code
+        this.codeEditor.setOnKeyReleased((e) -> {
+            if(!(this.file == null)) {
+                // text has changed
+                if(!this.textAtLastSave.equals(this.codeEditor.getCode())){
+                    // there are no unsaved changes yet - need to update tab information
+                    if(!this.unsavedChanges){
+                        this.unsavedChanges = true;
+                        this.setText(this.name + unsavedLabel);
 
-                    // setting tab graphic 
-                    if(this.type == EditorFileType.PROGRAM){
-                        this.setGraphic(new ImageView(programUnsavedImage));
-                    }
-                    else{
-                        this.setGraphic(new ImageView(tableUnsavedImage));
+                        // setting tab graphic 
+                        if(this.type == EditorFileType.PROGRAM){
+                            this.setGraphic(new ImageView(programUnsavedImage));
+                        }
+                        else{
+                            this.setGraphic(new ImageView(tableUnsavedImage));
+                        }
                     }
                 }
-           }
-           // text has gone back to last save
-           else{
-                // there were previously unsaved changes - need to update tab information
-                if(this.unsavedChanges){
-                    // upudating tab information
-                    this.unsavedChanges = false;
-                    this.setText(this.name);
+                // text has gone back to last save
+                else{
+                        // there were previously unsaved changes - need to update tab information
+                        if(this.unsavedChanges){
+                            // upudating tab information
+                            this.unsavedChanges = false;
+                            this.setText(this.name);
 
-                    // setting tab graphic 
-                    if(this.type == EditorFileType.PROGRAM){
-                        this.setGraphic(new ImageView(programImage));
+                            // setting tab graphic 
+                            if(this.type == EditorFileType.PROGRAM){
+                                this.setGraphic(new ImageView(programImage));
+                            }
+                            else{
+                                this.setGraphic(new ImageView(tableImage));
+                            }
                     }
-                    else{
-                        this.setGraphic(new ImageView(tableImage));
-                    }
-               }
-           }
-       });
+                }
+            }
+        });
     }
 
     //////////////////////////
@@ -253,20 +282,20 @@ public abstract class EditorFile extends Tab{
         BufferedReader reader = new BufferedReader(new FileReader(this.file));
 
         // iterating through the file
-        String content = "";
+        ArrayList<String> content = new ArrayList<String>();
         while(reader.ready()){
             // getting next line
             String line = reader.readLine();
 
             // buildiing the content
-            content += line + "\n";
+            content.add(line);
         }
 
         // closiing the reader
         reader.close();
 
-        // returning the content
-        return content;
+        // returning the content seperated into lines
+        return String.join("\n", content);
     }
 
     ////////////
@@ -349,16 +378,19 @@ public abstract class EditorFile extends Tab{
      */
     private void writeContentToFile(File file){
         try {
-            // writing program content to file
+            // content to save
+            String saveContent = this.codeEditor.getCode();
+
+            // writing save content to file
             OutputStream out = new FileOutputStream(file);
-            out.write(this.textArea.getText().getBytes());
+            out.write(saveContent.getBytes());
             out.close();
 
             // updating tab information
             this.unsavedChanges = false;
             this.name = file.getName();
             this.setText(this.name);
-            this.textAtLastSave = this.textArea.getText();
+            this.textAtLastSave = saveContent;
 
             // setting tab graphic 
             if(this.type == EditorFileType.PROGRAM){
@@ -431,8 +463,8 @@ public abstract class EditorFile extends Tab{
         return this.name;
     }
 
-    public TextArea getTextArea(){
-        return this.textArea;
+    public CodeEditor getCodeEditor(){
+        return this.codeEditor;
     }
 
     public File getFile(){
