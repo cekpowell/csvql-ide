@@ -8,9 +8,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import Controller.SystemController;
 import View.Editor.EditorFile.EditorFileType;
-import View.Tools.ErrorAlert;
 
 /**
  * Toolbar for editing programs within the IDE.
@@ -18,20 +16,18 @@ import View.Tools.ErrorAlert;
 public class EditorFileToolbar extends HBox{
 
     // constants
-    private static final Image saveAsImage = new Image("save-as.png");
-    private static final Image saveImage = new Image("save.png");
-    private static final Image renameImage = new Image("rename.png");
-    private static final Image undoImage = new Image("undo.png");
-    private static final Image redoImage = new Image("redo.png");
-    private static final Image zoomInImage = new Image("zoom-in.png");
-    private static final Image zoomOutImage = new Image("zoom-out.png");
-    private static final Image playImage = new Image("play.png");
+    private static final Image saveAsImage = new Image("img/save-as.png");
+    private static final Image saveImage = new Image("img/save.png");
+    private static final Image undoImage = new Image("img/undo.png");
+    private static final Image redoImage = new Image("img/redo.png");
+    private static final Image zoomInImage = new Image("img/zoom-in.png");
+    private static final Image zoomOutImage = new Image("img/zoom-out.png");
+    private static final Image playImage = new Image("img/play.png");
     
     // member variables
     private EditorFile editorFile;
     private Button saveAsButton;
     private Button saveButton;
-    private Button renameButton;
     private Button undoButton;
     private Button redoButton;
     private Button zoomInButton;
@@ -48,7 +44,6 @@ public class EditorFileToolbar extends HBox{
         this.editorFile = editorFile;
         this.saveAsButton = new Button("", new ImageView(saveAsImage));
         this.saveButton = new Button("", new ImageView(saveImage));
-        this.renameButton = new Button("", new ImageView(renameImage));
         this.undoButton = new Button("", new ImageView(undoImage));
         this.redoButton = new Button("", new ImageView(redoImage));
         this.zoomInButton = new Button("", new ImageView(zoomInImage));
@@ -71,7 +66,7 @@ public class EditorFileToolbar extends HBox{
         Separator undoRedoSep = new Separator(Orientation.VERTICAL);
 
         // container for left side
-        HBox leftContainer = new HBox(this.saveAsButton, this.saveButton, this.renameButton, saveSep, this.undoButton, this.redoButton, undoRedoSep, this.zoomInButton, this.zoomOutButton);
+        HBox leftContainer = new HBox(this.saveAsButton, this.saveButton, saveSep, this.undoButton, this.redoButton, undoRedoSep, this.zoomInButton, this.zoomOutButton);
         HBox.setHgrow(leftContainer, Priority.ALWAYS);
         leftContainer.setSpacing(10);
 
@@ -101,14 +96,6 @@ public class EditorFileToolbar extends HBox{
         this.saveButton.setOnAction((e) -> {
             // saving the program
             this.editorFile.save();
-        });
-
-        // rename
-        this.renameButton.setOnAction((e) ->{
-            // displaying rename file form
-            RenameFileForm renameFileForm = new RenameFileForm(this.editorFile.getFile().getName());
-            renameFileForm.initOwner(this.getScene().getWindow());
-            renameFileForm.show();
         });
 
         // undo

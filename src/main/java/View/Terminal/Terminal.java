@@ -56,9 +56,9 @@ public class Terminal extends BorderPane{
                                                         "</script>" +
                                                         "</body>" +
                                                         "</html>";
-    private static final Image terminalImage = new Image("terminal.png");
-    private static final Image messageImage = new Image("message.png");
-    private static final Image errorImage = new Image("error.png");
+    private static final Image terminalImage = new Image("img/terminal.png");
+    private static final Image messageImage = new Image("img/message.png");
+    private static final Image errorImage = new Image("img/error.png");
     private static final KeyCombination keyCombCtrS = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination keyCombCtrPlus = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination keyCombCtrMinus = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN);

@@ -17,6 +17,7 @@ import View.App.NewProgramForm;
 import View.App.Toolbar;
 import View.Editor.EditorFile;
 import View.Editor.Table;
+import View.Editor.EditorFile.EditorFileType;
 import View.Tools.ErrorAlert;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -27,7 +28,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 public class SystemController {
 
     // constants
-    private static final String interpreter = "csvql-no-colour";
+    private static final String interpreterExe = "csvql-no-colour";
     private static final String cqlExtension = "cql";
     
     // local variables
@@ -215,36 +216,6 @@ public class SystemController {
         SystemController.dashboard.getEditor().removeTable(file);
     }
 
-    ////////////////////
-    // RENAMING FILES //
-    ////////////////////
-
-    /**
-     * Attempts to rename a file within the system.
-     * 
-     * @param type The type of file being renamed.
-     * @param initialName The initial name of the file.
-     * @param newName The new name of the file.
-     * 
-     * @param Exception If the file could not be renamed.
-     */
-    public static void renameSelectedEditoFile(String newName) throws Exception{
-        // making sure no tables in the store have this name
-        for(File file : dashboard.getTableStore().getFiles()){
-            if(file.getName().equals(newName)){
-                throw new Exception("There is already a table in the store with this name!");
-            }
-        }
-
-        // making sure no open editors have this name
-        if(dashboard.getEditor().editorFileAlreadyHasName(newName)){
-            throw new Exception("There is already a file with this name in the editor!");
-        }
-
-        // renaming the current editor file
-        SystemController.dashboard.getEditor().getSelectedEditorFile().rename(newName);
-    }
-
     //////////////////////
     // RUNNING PROGRAMS //
     //////////////////////
@@ -264,7 +235,7 @@ public class SystemController {
 
         // interpreter file
         
-        neededFiles.add(FileUtils.toFile(SystemController.class.getClassLoader().getResource(SystemController.interpreter)));
+        neededFiles.add(FileUtils.toFile(SystemController.class.getClassLoader().getResource("interpreter/" + SystemController.interpreterExe)));
 
         // program file
         if(program.getFile() != null){
@@ -345,8 +316,8 @@ public class SystemController {
 
         // command to be run
         String[] command = {"bash", "-c", 
-                            "chmod +x " + SystemController.interpreter +  
-                            " && ./" + SystemController.interpreter + " " + programName};
+                            "chmod +x " + SystemController.interpreterExe +  
+                            " && ./" + SystemController.interpreterExe + " " + programName};
 
         // process builder to run the command
         ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);

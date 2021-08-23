@@ -16,10 +16,10 @@ import javafx.scene.layout.Priority;
 public class TerminalToolbar extends HBox{
 
     // constants
-    private static final Image saveAsImage = new Image("save-as.png");
-    private static final Image zoomInImage = new Image("zoom-in.png");
-    private static final Image zoomOutImage = new Image("zoom-out.png");
-    private static final Image copyImage = new Image("copy.png");
+    private static final Image saveAsImage = new Image("img/save-as.png");
+    private static final Image zoomInImage = new Image("img/zoom-in.png");
+    private static final Image zoomOutImage = new Image("img/zoom-out.png");
+    private static final Image copyImage = new Image("img/copy.png");
     
     // member variables
     private Terminal terminal;

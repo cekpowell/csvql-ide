@@ -13,9 +13,9 @@ import Controller.SystemController;
 public class Toolbar extends MenuBar {
 
     // constants
-    private static final Image fileImage = new Image("file.png");
-    private static final Image openImage = new Image("open.png");
-    private static final Image newImage = new Image("new.png");
+    private static final Image fileImage = new Image("img/file.png");
+    private static final Image openImage = new Image("img/open.png");
+    private static final Image newImage = new Image("img/new.png");
 
     // member variables
     private Dashboard dashboard;

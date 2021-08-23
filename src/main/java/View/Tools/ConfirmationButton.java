@@ -1,6 +1,5 @@
 package View.Tools;
 
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -12,14 +11,7 @@ import javafx.stage.Window;
  */
 public class ConfirmationButton extends Button {
 
-    // static variables
-    private static final ButtonType confirm = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
-    private static final ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-    private static final int width = 300;
-    private static final int height = 100;
-
     // member variables
-    private String label;
     private String confirmationTitle;
     private String confirmationMessage;
 

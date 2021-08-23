@@ -108,7 +108,7 @@ public class FileContainer extends TabPane{
     }
 
     //////////////////////
-    // REMOING PROGRAMS //
+    // REMOVING PROGRAMS //
     //////////////////////
 
     /**

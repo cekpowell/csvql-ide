@@ -33,10 +33,10 @@ import View.Tools.ErrorAlert;
 public abstract class EditorFile extends Tab{
     
     // constants
-    private static final Image programImage = new Image("program.png");
-    private static final Image programUnsavedImage = new Image("program-unsaved.png");
-    private static final Image tableImage = new Image("table.png");
-    private static final Image tableUnsavedImage = new Image("table-unsaved.png");
+    private static final Image programImage = new Image("img/program.png");
+    private static final Image programUnsavedImage = new Image("img/program-unsaved.png");
+    private static final Image tableImage = new Image("img/table.png");
+    private static final Image tableUnsavedImage = new Image("img/table-unsaved.png");
     private static final String unsavedLabel = "(Unsaved)";
     private static final KeyCombination keyCombCtrS = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
     private static final KeyCombination keyCombCtrR = new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN);
@@ -438,46 +438,6 @@ public abstract class EditorFile extends Tab{
 
         // showing the saving dialog
         return fileChooser.showSaveDialog(this.fileContainer.getScene().getWindow());
-    }
-
-    //////////////
-    // RENAMING //
-    //////////////
-
-    /**
-     * Attempts to rename the editor file.
-     * 
-     * @param newName The new name of the file.
-     * 
-     * @throws Exception If the file could not be renamed.
-     */
-    public void rename(String newName) throws Exception{
-        // attempting to rename the file
-        try{
-            // getting path to current file
-            Path source = Paths.get(this.file.getAbsolutePath());
-
-            // renaming the file
-            Path newPath = Files.move(source, source.resolveSibling(newName));
-
-            // updating the file property
-            this.file = newPath.toFile();
-
-            // updating the tab information
-            this.name = newName;
-            if(this.unsavedChanges){
-                this.setText(newName + unsavedLabel);
-            }
-            else{
-                this.setText(newName);
-            }
-        }
-        catch(FileAlreadyExistsException e){
-            throw new Exception("A file with this name already exists in the directory!");
-        }
-        catch(Exception e){
-            throw new Exception("Unable to rename file.\n" + e.getMessage());
-        }
     }
 
     /////////////

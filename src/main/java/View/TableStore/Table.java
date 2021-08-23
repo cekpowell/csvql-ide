@@ -19,9 +19,9 @@ import View.Tools.ErrorAlert;
 public class Table extends HBox{
 
     // constants
-    private static final Image tableImage = new Image("table.png");
-    private static final Image openInEditorImage = new Image("openInEditor.png");
-    private static final Image removeImage = new Image("remove.png");
+    private static final Image tableImage = new Image("img/table.png");
+    private static final Image openInEditorImage = new Image("img/openInEditor.png");
+    private static final Image removeImage = new Image("img/remove.png");
 
     // member variables
     private TableStore filestore;

@@ -25,9 +25,9 @@ import View.Tools.SectionTitle;
 public class TableStore extends VBox{
 
     // constants
-    private static final Image tableStoreImage = new Image("table-store.png");
-    private static final Image openImage = new Image("open.png");
-    private static final Image closeImage = new Image("remove.png");
+    private static final Image tableStoreImage = new Image("img/table-store.png");
+    private static final Image openImage = new Image("img/open.png");
+    private static final Image closeImage = new Image("img/remove.png");
     
     // member variables
     private Dashboard dashboard;

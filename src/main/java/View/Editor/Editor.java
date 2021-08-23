@@ -21,9 +21,9 @@ import View.Tools.SectionTitle;
 public class Editor extends BorderPane{
 
     // constants
-    private static final Image editorImage = new Image("editor.png");
-    private static final Image openImage = new Image("open.png");
-    private static final Image newImage = new Image("new.png");
+    private static final Image editorImage = new Image("img/editor.png");
+    private static final Image openImage = new Image("img/open.png");
+    private static final Image newImage = new Image("img/new.png");
 
     // member variables
     private Dashboard dashboard;
