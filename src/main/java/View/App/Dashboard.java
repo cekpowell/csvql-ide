@@ -5,15 +5,17 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 
 import View.Editor.*;
-import View.TableStore.TableStore;
 import View.Terminal.*;
+import View.TableStore.*;
+
 
 /**
  * The main view for the application - contains an Editor, Terminal
- * and FileStore
+ * and FileStore.
  */
 public class Dashboard extends BorderPane{
-    // static variables
+
+    // constants
     private static final double editorDividerRatio = 0.67;
     private static final double filestoreDividerRatio = 0.88;
     
@@ -21,6 +23,10 @@ public class Dashboard extends BorderPane{
     private Editor editor;
     private Terminal terminal;
     private TableStore tableStore;
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
      * Class constructor.

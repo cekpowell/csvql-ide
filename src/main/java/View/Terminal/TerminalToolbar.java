@@ -1,25 +1,22 @@
 package View.Terminal;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+
+import Model.Images;
+import View.Tools.AppToolbar;
 
 /**
- * Toolbar placed at the top of each output view.
+ * Toolbar placed at the top of the Terminal when an output is 
+ * displayed.
  */
-public class TerminalToolbar extends HBox{
+public class TerminalToolbar extends AppToolbar{
 
-    // constants
-    private static final Image saveAsImage = new Image("img/save-as.png");
-    private static final Image zoomInImage = new Image("img/zoom-in.png");
-    private static final Image zoomOutImage = new Image("img/zoom-out.png");
-    private static final Image copyImage = new Image("img/copy.png");
+    // constants 
+    private static final int toolbarPadding = 10;
+    private static final int toolbarSectionSpace = 10;
+    private static final int toolbarControlSpace = 10;
     
     // member variables
     private Terminal terminal;
@@ -27,7 +24,10 @@ public class TerminalToolbar extends HBox{
     private Button zoomInButton;
     private Button zoomOutButton;
     private Button copyButton;
-    
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
      * Class constructor.
@@ -36,46 +36,37 @@ public class TerminalToolbar extends HBox{
      */
     public TerminalToolbar(Terminal terminal){
         // initializing
+        super(TerminalToolbar.toolbarPadding, TerminalToolbar.toolbarSectionSpace, TerminalToolbar.toolbarControlSpace);
         this.terminal = terminal;
-        this.saveAsButton = new Button("", new ImageView(saveAsImage));
-        this.zoomInButton = new Button("", new ImageView(zoomInImage));
-        this.zoomOutButton = new Button("", new ImageView(zoomOutImage));
-        this.copyButton = new Button("", new ImageView(copyImage));
-
-        ///////////////////////////
-        // CONTAINERS AND EXTRAS //
-        ///////////////////////////
-
-        // seperators for content
-        Separator saveSep = new Separator(Orientation.VERTICAL);
-        Separator undoRedoSep = new Separator(Orientation.VERTICAL);
-
-        // container for left side
-        HBox leftContainer = new HBox(this.saveAsButton, saveSep, this.zoomInButton, this.zoomOutButton);
-        HBox.setHgrow(leftContainer, Priority.ALWAYS);
-        leftContainer.setSpacing(10);
-
-        // container for right side
-        HBox rightContainer = new HBox(this.copyButton);
-        HBox.setHgrow(rightContainer, Priority.ALWAYS);
-        rightContainer.setAlignment(Pos.TOP_RIGHT);
+        this.saveAsButton = new Button("", new ImageView(Images.SAVE_AS));
+        this.zoomInButton = new Button("", new ImageView(Images.ZOOM_IN));
+        this.zoomOutButton = new Button("", new ImageView(Images.ZOOM_OUT));
+        this.copyButton = new Button("", new ImageView(Images.COPY));
 
         /////////////////
         // CONFIGURING //
         /////////////////
+
+        // event handling
+        this.configureEvents();
         
-        // adding content
-        this.getChildren().addAll(leftContainer, rightContainer);
-        this.setPadding(new Insets(10));
+        // LHS controls
+        this.addGroupsLeftContainerWithSepSplice(new Node[] {this.saveAsButton},                      // SAVING GROUP
+                                                 new Node[] {this.zoomInButton, this.zoomOutButton}); // ZOOM GROUP
+        // RHS controls
+        this.addRightContainerWithSep(this.copyButton);
+                                
+    }
 
-        /////////////
-        // ACTIONS //
-        /////////////
-
+    /**
+     * Defines the event handling for the events that can occur 
+     * within the control.
+     */
+    private void configureEvents(){
         // save as
         this.saveAsButton.setOnAction((e) -> {
             // saving the program
-            this.terminal.saveTerminalContent();
+            this.terminal.save();
         });
 
         // zoom in
@@ -93,7 +84,7 @@ public class TerminalToolbar extends HBox{
         // copy
         this.copyButton.setOnAction((e) -> {
             // copying the output
-            this.terminal.copyTerminalContent();
+            this.terminal.copy();
         });
     }
 }

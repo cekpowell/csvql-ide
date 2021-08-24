@@ -1,8 +1,6 @@
 package View.Tools;
 
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 import javafx.scene.image.ImageView;
 import javafx.stage.Window;
 
@@ -59,6 +57,6 @@ public class ConfirmationButton extends Button {
      * @return True if the user selected confirm, false if selected cancel.
      */
     public boolean showConfirmationWindow(Window owner){
-        return ConfirmationWindow.showConfirmationWindow(owner, this.confirmationTitle, this.confirmationMessage);
+        return PopUpWindow.showConfirmationWindow(owner, this.confirmationTitle, this.confirmationMessage);
     }
 }

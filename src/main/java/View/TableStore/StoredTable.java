@@ -5,81 +5,84 @@ import java.io.File;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBox; 
 
 import Controller.SystemController;
+import Model.Images;
 import View.Tools.ConfirmationButton;
-import View.Tools.ErrorAlert;
+import View.Tools.PopUpWindow;
 
 /**
  * View to represent a file that has been loaded into the filestore.
  */
-public class Table extends HBox{
-
-    // constants
-    private static final Image tableImage = new Image("img/table.png");
-    private static final Image openInEditorImage = new Image("img/openInEditor.png");
-    private static final Image removeImage = new Image("img/remove.png");
+public class StoredTable extends HBox{
 
     // member variables
     private TableStore filestore;
     private File file;
     private String name; 
+    private Label nameLabel;
     private Button openInEditorButton;
-    private ConfirmationButton removeButton;
+    private ConfirmationButton removeButton; 
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////  
 
     /**
      * Class constructor.
      * 
      * @param file The File object associated with this loaded file.
      */
-    public Table(TableStore filestore, File file){
+    public StoredTable(TableStore filestore, File file){
         // initializing
         this.filestore = filestore;
         this.file = file;
         this.name = file.getName();
-        this.openInEditorButton = new Button("", new ImageView(openInEditorImage)); // ImageView created here so each button has a seperate image
-        this.removeButton = new ConfirmationButton("", new ImageView(removeImage),
+        this.nameLabel = new Label(this.name);
+        this.openInEditorButton = new Button("", new ImageView(Images.OPEN_IN_EDITOR)); // ImageView created here so each button has a seperate image
+        this.removeButton = new ConfirmationButton("", new ImageView(Images.REMOVE),
                                                    "Remove Loaded File", 
                                                    "Are you sure you want to remove this table from the system?" + "\n" +
                                                    "Any unsaved progress in the Editor will be lost.");
 
+        // Configuring Member Variables //
 
-        ///////////////////////////
-        // CONTAINERS AND EXTRAS //
-        ///////////////////////////
-
-        // label for table
-        Label nameLabel = new Label(this.name);
-        nameLabel.setGraphic(new ImageView(tableImage));
+        // setting graphic of name label
+        this.nameLabel.setGraphic(new ImageView(Images.TABLE));
 
         /////////////////
         // CONFIGURING //
         /////////////////
 
-        this.getChildren().addAll(nameLabel, this.openInEditorButton, this.removeButton);
+        // event handling
+        this.configureEvents();
+
+        // adding controls
+        this.getChildren().addAll(this.nameLabel, this.openInEditorButton, this.removeButton);
         this.setAlignment(Pos.CENTER);
         this.setSpacing(5);
+    }
 
-        /////////////
-        // ACTIONS //
-        /////////////
-
-        // open in editor
+    /**
+     * Defines the event handling for the events that can occur 
+     * within the control.
+     */
+    private void configureEvents(){
+        // Open in Editor
         this.openInEditorButton.setOnAction((e) -> {
             // placing the file within the editor
             try{
-                SystemController.addTableToEditor(this.file);
+                SystemController.getInstance().createNewEditorTab(this);
             }
             // handling error
             catch (Exception ex) {
-                ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
-            }
+                PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+            } 
         });
 
-        // remove
+        // Remove
         this.removeButton.setOnAction((e) -> {
             // showing the confirmation button pop-up window
             boolean removeConfirmed = this.removeButton.showConfirmationWindow(this.getScene().getWindow());
@@ -87,12 +90,17 @@ public class Table extends HBox{
             // clearing if the use confirmed the remove
             if(removeConfirmed){
                 // removing the loaded file from the filestore
-                this.filestore.removeTable(this);
-
-                // removing the file from the editor
-                SystemController.removeTableFromEditor(this.file);
+                this.filestore.removeStoredTable(this);
             }
         });
+    }
+
+    /**
+     * Updates the content displayed in the stored table graphic.
+     */
+    private void updateContent(){
+        // updating name label
+        this.nameLabel.setText(this.name);
     }
 
     /////////////////////////
@@ -105,5 +113,15 @@ public class Table extends HBox{
 
     public String getName(){
         return this.name;
+    }
+
+    public void setFile(File file){
+        this.file = file;
+
+        /**
+         * Also need to update the name and displayed content.
+         */
+        this.name = file.getName();
+        this.updateContent();
     }
 }

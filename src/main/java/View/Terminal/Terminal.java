@@ -3,70 +3,35 @@ package View.Terminal;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.FileChooser;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
-
+import Controller.FileManager;
+import Model.FileType;
+import Model.Images;
+import Model.KeyCodes;
 import View.App.Dashboard;
-import View.Editor.EditorFile.EditorFileType;
-import View.Tools.CodeEditor;
-import View.Tools.ErrorAlert;
+import View.Tools.CodeArea;
+import View.Tools.PopUpWindow;
 import View.Tools.SectionTitle;
 
 /**
- * View for viewing the result of running programs.
+ * View for displaying the result of running programs.
  */
 public class Terminal extends BorderPane{
 
-    // constants 
-    private static final String resourcesPath = Terminal.class.getClassLoader().getResource("codeMirror/").toString();
-    private static final String codeMirrorTemplate = 
-                                                        "<!doctype html>" +
-                                                        "<html>" +
-                                                        "<head>" +
-                                                        "   <script src=\"" + resourcesPath + "/lib/codemirror.js\"></script>" + 
-                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "lib/codemirror.css\">" + 
-                                                        "   <script src=\"" + resourcesPath + "/mode/mathematica/mathematica.js\"></script>" + 
-                                                        "   <link rel=\"stylesheet\" href=\"" + resourcesPath + "theme/3024-day.css\">" +
-                                                        "</head>" +
-                                                        "<body style='margin: 0', bgcolor=#ffffff>" +
-                                                        "<form><textarea id=\"code\" name=\"code\">\n" +
-                                                        "${code}" +
-                                                        "</textarea></form>" +
-                                                        "<script>" +
-                                                        "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
-                                                        "    mode: \"\"," + // no syntax for tables
-                                                        "    lineNumbers: true," +
-                                                        "    styleActiveLine: true," +
-                                                        "    styleActiveSelected: true," + 
-                                                        "    readOnly: true," + 
-                                                        "    theme: \"3024-day\"," + 
-                                                        "  });" +
-                                                        "</script>" +
-                                                        "</body>" +
-                                                        "</html>";
-    private static final Image terminalImage = new Image("img/terminal.png");
-    private static final Image messageImage = new Image("img/message.png");
-    private static final Image errorImage = new Image("img/error.png");
-    private static final KeyCombination keyCombCtrS = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
-    private static final KeyCombination keyCombCtrPlus = new KeyCodeCombination(KeyCode.EQUALS, KeyCombination.SHORTCUT_DOWN);
-    private static final KeyCombination keyCombCtrMinus = new KeyCodeCombination(KeyCode.MINUS, KeyCombination.SHORTCUT_DOWN);
+    // constants
+    private static final String initialFileName = "Output.csv";
 
     // member variables
     private Dashboard dashboard;
     private TerminalToolbar terminalToolbar;
-    private CodeEditor codeEditor;
+    private CodeArea codeArea;
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
      * Class constructor.
@@ -77,14 +42,14 @@ public class Terminal extends BorderPane{
         // initializing
         this.dashboard = dashboard;
         this.terminalToolbar = new TerminalToolbar(this);
-        this.codeEditor = new CodeEditor(Terminal.codeMirrorTemplate, "");
+        this.codeArea = new CodeArea(FileType.TERMINAL.getCodeMirrorTemplate(), "");
 
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
         ///////////////////////////
 
         // configuring title label
-        SectionTitle titleLabel = new SectionTitle("Terminal", new ImageView(terminalImage));
+        SectionTitle titleLabel = new SectionTitle("Terminal", new ImageView(Images.TERMINAL));
 
         // container for title 
         VBox container = new VBox(titleLabel);
@@ -94,30 +59,35 @@ public class Terminal extends BorderPane{
         // CONFIGURING //
         /////////////////
 
+        // event handling
+        this.configureEvents();
+
         // adding controls to the editor
         this.setTop(container);
-        this.displayNoOutputScreen();
+        this.displayNoOutputScreen();        
+    }
 
-        /////////////
-        // ACTIONS //
-        /////////////
-
+    /**
+     * Defines the event handling for the events that can occur 
+     * within the control.
+     */
+    private void configureEvents(){
         // Shortcuts
-        this.codeEditor.setOnKeyPressed((e) -> {
+        this.codeArea.setOnKeyPressed((e) -> {
             // CTRL + S 
-            if(keyCombCtrS.match(e)){
+            if(KeyCodes.CTRL_S.match(e)){
                 // saving file
-                this.saveTerminalContent();
+                this.save();
             }
             // CTRL + PLUS
-            else if(keyCombCtrPlus.match(e)){
+            else if(KeyCodes.CTRL_PLUS.match(e)){
                 // performing zoom-in
-                this.codeEditor.zoomIn();;
+                this.codeArea.zoomIn();;
             }
             // CTRL + MINUS
-            else if(keyCombCtrMinus.match(e)){
+            else if(KeyCodes.CTRL_MINUS.match(e)){
                 // performing zoom-out
-                this.codeEditor.zoomOut();;
+                this.codeArea.zoomOut();;
             }
         });
     }
@@ -132,7 +102,7 @@ public class Terminal extends BorderPane{
      */
     private void displayNoOutputScreen(){
         // creating error label
-        Label noOutputLabel = new Label("No Output", new ImageView(messageImage));
+        Label noOutputLabel = new Label("No Output", new ImageView(Images.MESSAGE));
 
         // creating error message label
         Label messageLabel = new Label("Use the editor to run a program!");
@@ -166,10 +136,10 @@ public class Terminal extends BorderPane{
         }
         else{
             // setting the text area text
-            this.codeEditor.setCode(output);
+            this.codeArea.setCode(output);
 
             // creating container for toolbar and code editor
-            VBox container = new VBox(this.terminalToolbar, this.codeEditor);
+            VBox container = new VBox(this.terminalToolbar, this.codeArea);
 
             // displaying the container
             this.setCenter(container);
@@ -213,7 +183,7 @@ public class Terminal extends BorderPane{
      */
     private void displayErrorScreen(String errorMessage){
         // creating error label
-        Label errorLabel = new Label("Error", new ImageView(errorImage));
+        Label errorLabel = new Label("Error", new ImageView(Images.ERROR));
 
         // creating error message label
         Label errorMessageLabel = new Label(errorMessage);
@@ -234,60 +204,13 @@ public class Terminal extends BorderPane{
     /**
      * Saves the terminal content into a new file.
      */
-    public void saveTerminalContent(){
-        // getting the file to save the program to
-        File chosenFile = this.getSaveFile();
-
-        if(chosenFile != null){
-            try{
-                // saving program
-                this.writeContentToFile(chosenFile);
-            }
-            // handling error
-            catch (Exception e) {
-                ErrorAlert.showErrorAlert(this.getScene().getWindow(), e);
-            }
+    public void save(){
+        try{
+            FileManager.writeContentToNewFile(this.codeArea.getCode(), this.getScene().getWindow(), Terminal.initialFileName, FileType.TERMINAL.getExtensionFilters());
         }
-    }
-
-    /**
-     * Writes the content of the EditorFile into the provided File.
-     * 
-     * @param file The File the EditorFile is being written into.
-     * @return True if the file was writen, false if not.
-     */
-    private void writeContentToFile(File file){
-        try {
-            // content to save
-            String saveContent = this.codeEditor.getCode();
-
-            // writing save content to file
-            OutputStream out = new FileOutputStream(file);
-            out.write(saveContent.getBytes());
-            out.close();
+        catch(Exception e){
+            PopUpWindow.showErrorWindow(this.getScene().getWindow(), e);
         }
-        // handling error
-        catch (Exception e) {
-            ErrorAlert.showErrorAlert(this.getScene().getWindow(), e);
-        }
-    }
-
-    /**
-     * Helper method to save an EditorFile that has not yet been saved. Opens
-     * a file choser dialog and allows the user to select where the EditorFile will
-     * be saved.
-     * 
-     * @param initialFilename The initial name of the file being saved.
-     * @return The selected file if one was chosen, null if it was not.
-     */
-    private File getSaveFile(){
-        // setting up the file choser
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName("Output");
-        fileChooser.getExtensionFilters().addAll(EditorFileType.TABLE.getExtensionFilter());
-
-        // showing the saving dialog
-        return fileChooser.showSaveDialog(this.getScene().getWindow());
     }
 
     /////////////
@@ -297,23 +220,16 @@ public class Terminal extends BorderPane{
     /**
      * Copies the Terminal's content to the system clipboard
      */
-    public void copyTerminalContent(){
-        // setting up clipboard
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
-
-        // getting terminal content
-        content.putString(this.codeEditor.getCode());
-
-        // putting terminal content into system clipboard
-        clipboard.setContent(content);
+    public void copy(){
+        // copying the content to the clipboard
+        FileManager.copyContentToClipboard(this.codeArea.getCode());
     }
 
     /////////////////////////
     // GETTERS AND SETTERS //
     /////////////////////////
 
-    public CodeEditor getCodeEditor(){
-        return this.codeEditor;
+    public CodeArea getCodeEditor(){
+        return this.codeArea;
     }
 }

@@ -6,12 +6,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
-
 /**
- * A syntax editor created by wrapping a CodeMirrow application in a JavaFX
+ * A code editor created by wrapping a CodeMirror application in a JavaFX
  * WebView.
+ * 
+ * A CodeMirror template (JavaScript code that set's up the CodeMirror widget)
+ * must be supplied in order to configure the CodeArea.
  */
-public class CodeEditor extends StackPane {
+public class CodeArea extends StackPane {
 
     // constants
     private static final double startZoom = 1.4;
@@ -23,15 +25,18 @@ public class CodeEditor extends StackPane {
     private WebView webview;
     private final String codeMirrorTemplate;
 
-    /////////////////
-    // CONSTRUCTOR //
-    /////////////////
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
-     * Create a new code editor.
-     * @param editingCode the initial code to be edited in the code editor.
+     * Class constructor.
+     * 
+     * @param codeMirrorTemplate The JavaScript that will be loaded into
+     * the WebView to configure the CodeMirror widget.
+     * @param editingCode The initial code to be shown in the CodeMirror.
      */
-    public CodeEditor(String codeMirrorTemplate, String initialCode) {
+    public CodeArea(String codeMirrorTemplate, String initialCode) {
         // initializing
         this.codeMirrorTemplate = codeMirrorTemplate;
         this.webview = new WebView();
@@ -57,6 +62,9 @@ public class CodeEditor extends StackPane {
 
         // setting the code into the webview (loading the code mirror)
         this.setCode(initialCode);
+
+        // disabling right click (messes with unsaved changes detection)
+        this.webview.setContextMenuEnabled(false);
 
         // dispaying the container in the pane
         this.getChildren().add(container);

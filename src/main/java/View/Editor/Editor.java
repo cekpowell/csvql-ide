@@ -3,16 +3,13 @@ package View.Editor;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-import java.io.File;
-
 import Controller.SystemController;
+import Model.Images;
 import View.App.Dashboard;
-import View.App.NewProgramForm;
 import View.Tools.SectionTitle;
 
 /**
@@ -20,14 +17,13 @@ import View.Tools.SectionTitle;
  */
 public class Editor extends BorderPane{
 
-    // constants
-    private static final Image editorImage = new Image("img/editor.png");
-    private static final Image openImage = new Image("img/open.png");
-    private static final Image newImage = new Image("img/new.png");
-
     // member variables
-    private Dashboard dashboard;
-    private FileContainer fileContainer;
+    private Dashboard dashboard; 
+    private EditorTabContainer editorTabContainer;
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
      * Class constructor.
@@ -35,14 +31,14 @@ public class Editor extends BorderPane{
     public Editor(Dashboard dashboard){
         // initializing
         this.dashboard = dashboard;
-        this.fileContainer = new FileContainer(this);
+        this.editorTabContainer = new EditorTabContainer(this);
 
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
         ///////////////////////////
 
         // title label
-        SectionTitle titleLabel = new SectionTitle("Editor", new ImageView(editorImage));
+        SectionTitle titleLabel = new SectionTitle("Editor", new ImageView(Images.EDITOR));
 
         // container for title and toolbar
         VBox container = new VBox(titleLabel);
@@ -54,163 +50,68 @@ public class Editor extends BorderPane{
 
         // adding controls to the editor
         this.setTop(container);
-        this.showNoEditorFileScreen();
+
+        // updating the contents of the editor
+        this.updateContents();
     }
 
-    ///////////////////////////
-    // NO EDITOR FILE SCREEN //
-    ///////////////////////////
+    /////////////////////////////////
+    // CONFIGURING EDITOR CONTENTS //
+    /////////////////////////////////
+
+    /**
+     * Updates the editor to display the editor tab container if it has tabs
+     * or the no editor tab screen if it has none.
+     */
+    public void updateContents(){
+        // editor tab container has no tabs
+        if(this.editorTabContainer.getEditorTabs().size() == 0){
+            // showing no editor tab screen
+            this.showNoEditorTabScreen();
+        }
+        // editor tab container has tabs
+        else{
+            // setting file container into the control
+            this.setCenter(this.editorTabContainer);
+        }
+    }
 
     /**
      * Shows a view for when their are no programs currently open.
      */
-    public void showNoEditorFileScreen(){
+    private void showNoEditorTabScreen(){
         // buttons to open program or create new one
-        Button openFileButton = new Button("Open", new ImageView(openImage));
-        Button newFileButton = new Button("New", new ImageView(newImage));
+        Button newFileButton = new Button("New", new ImageView(Images.NEW_FILE));
+        Button openFileButton = new Button("Open", new ImageView(Images.OPEN));
 
         // container for these buttons 
-        VBox container = new VBox(openFileButton, newFileButton);
+        VBox container = new VBox(newFileButton, openFileButton);
         container.setAlignment(Pos.CENTER);
         container.setSpacing(10);
 
-        // Open Program Action //
-        openFileButton.setOnAction((e) -> {
-            // opening files through the system controller
-            SystemController.openFile();
+        // Event Handling //
+
+        // New File
+        newFileButton.setOnAction((e) -> {
+            // creating new file through system controller
+            SystemController.getInstance().createNewFile();
         });
 
-        // New Program Action //
-        newFileButton.setOnAction((e) -> {
-            // creating input form
-            NewProgramForm newProgramForm = new NewProgramForm();
-            newProgramForm.initOwner(this.getScene().getWindow());
-            newProgramForm.show();
+        // Open File
+        openFileButton.setOnAction((e) -> {
+            // opening files through the system controller
+            SystemController.getInstance().openFile();
         });
 
         // adding buttons to editor
         this.setCenter(container);
     }
 
-    /////////////////////
-    // ADDING PROGRAMS //
-    /////////////////////
-
-    /**
-     * Adds a new program into the editor with the provided name.
-     * 
-     * @param name The name of the new program.
-     */
-    public void createNewProgram(String name) throws Exception{
-        // creating new program
-        this.fileContainer.createNewProgram(name);
-
-        // setting file container into the control
-        this.setCenter(this.fileContainer);
-    }
-
-    /**
-     * Adds a new program into the editor with the provided name.
-     * 
-     * @param name The name of the new program.
-     */
-    public void loadProgram(File file) throws Exception{
-        // creating new program
-        this.fileContainer.loadProgram(file);
-
-        // setting file container into the control
-        this.setCenter(this.fileContainer);
-    }
-
-    ///////////////////
-    // ADDING TABLES //
-    ///////////////////
-
-    /**
-     * Adds a new table into the editor with the provided name.
-     * 
-     * @param name The name of the new table.
-     */
-    public void createNewTable(String name) throws Exception{
-        // creating new table
-        this.fileContainer.createNewTable(name);
-
-        // setting file container into the control
-        this.setCenter(this.fileContainer);
-    }
-
-    /**
-     * Adds a new program into the editor with the provided name.
-     * 
-     * @param name The name of the new program.
-     */
-    public void loadTable(File file) throws Exception{
-        // loading table
-        this.fileContainer.loadTable(file);
-
-        // setting file container into the control
-        this.setCenter(this.fileContainer);
-    }
-
-    /////////////////////
-    // REMOVING TABLES //
-    /////////////////////
-
-    /**
-     * Removes the table associated with the provided file.
-     * 
-     * @param file The file associated with the table.
-     */
-    public void removeTable(File file){
-        // removing the table from the file container
-        this.fileContainer.removeTable(file);
-    }
-
-    ////////////
-    // HELPERS //
-    ////////////
-
-    /**
-     * Determines if the editor currently has unsaved files opened.
-     * 
-     * @return True if the editor has unsaved files open, false if not.
-     */
-    public boolean hasUnsavedFiles(){
-        // running the method on the file container
-        return this.fileContainer.hasUnsavedFiles();
-    }
-
-
-    /**
-     * Determines if an open editor file already has the name provided.
-     * 
-     * @param name The name being checked for.
-     * @return True if an open editor file has the name, false if not.
-     */
-    public boolean editorFileAlreadyHasName(String name){
-        // checking open programs
-        for(Program program : this.fileContainer.getPrograms()){
-            if(program.getFile().getName().equals(name)){
-                return true;
-            }
-        }
-
-        // checking open tables
-        for(Table table : this.fileContainer.getTables()){
-            if(table.getFile().getName().equals(name)){
-                return true;
-            }
-        }
-
-        // no matches, returning false
-        return false;
-    }
-
     /////////////////////////
     // GETTERS AND SETTERS //
     /////////////////////////
 
-    public EditorFile getSelectedEditorFile(){
-        return this.fileContainer.getCurrentEditorFile();
+    public EditorTabContainer getEditorTabContainer(){
+        return this.editorTabContainer;
     }
 }

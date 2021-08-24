@@ -1,40 +1,36 @@
 package View.TableStore;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.io.File;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
 
+import Controller.SystemController;
+import Model.Images;
 import View.App.Dashboard;
-import View.Editor.EditorFile.EditorFileType;
 import View.Tools.ConfirmationButton;
-import View.Tools.ErrorAlert;
 import View.Tools.SectionTitle;
 
 /**
  * Represents the panel within the application where the user loads files.
  */
 public class TableStore extends VBox{
-
-    // constants
-    private static final Image tableStoreImage = new Image("img/table-store.png");
-    private static final Image openImage = new Image("img/open.png");
-    private static final Image closeImage = new Image("img/remove.png");
     
     // member variables
     private Dashboard dashboard;
-    private FlowPane tableContainer;
-    private ArrayList<Table> tables;
+    private FlowPane storedTablesContainer;
+    private ArrayList<StoredTable> storedTables;
     private Button loadTableButton;
     private ConfirmationButton clearStoreButton;
+
+    //////////////////
+    // INITIALIZING //
+    //////////////////
 
     /**
      * Constructor for the class.
@@ -44,10 +40,10 @@ public class TableStore extends VBox{
     public TableStore(Dashboard dashboard){
         // Initialising //
         this.dashboard = dashboard;
-        this.tableContainer = new FlowPane();
-        this.tables = new ArrayList<Table>();
-        this.loadTableButton = new Button("Load Table", new ImageView(openImage));
-        this.clearStoreButton = new ConfirmationButton("Clear Store", new ImageView(closeImage),
+        this.storedTablesContainer = new FlowPane();
+        this.storedTables = new ArrayList<StoredTable>();
+        this.loadTableButton = new Button("Load Table", new ImageView(Images.OPEN));
+        this.clearStoreButton = new ConfirmationButton("Clear Store", new ImageView(Images.CLOSE),
                                                        "Clear Table Store", 
                                                        "Are you sure you want to remove all loaded tables from the system? " + "\n" +
                                                        "Any unsaved progress in the Editor will be lost.");
@@ -55,9 +51,9 @@ public class TableStore extends VBox{
         // Configuring Member Variables //
 
         // file container
-        this.tableContainer.setHgap(10);
-        this.tableContainer.setPadding(new Insets(10));
-        this.tableContainer.setOrientation(Orientation.HORIZONTAL);
+        this.storedTablesContainer.setHgap(10);
+        this.storedTablesContainer.setPadding(new Insets(10));
+        this.storedTablesContainer.setOrientation(Orientation.HORIZONTAL);
 
         // disabling clear store button (as no tables yet loaded)
         this.clearStoreButton.setDisable(true);
@@ -67,7 +63,7 @@ public class TableStore extends VBox{
         ///////////////////////////        
 
         // configuring title label
-        SectionTitle titleLabel = new SectionTitle("Table Store", new ImageView(tableStoreImage));
+        SectionTitle titleLabel = new SectionTitle("Table Store", new ImageView(Images.TABLE_STORE));
 
         // container for title
         HBox titleContainer = new HBox(titleLabel);
@@ -86,46 +82,29 @@ public class TableStore extends VBox{
         // CONFIGURING //
         /////////////////
 
+        // event handling
+        this.configureEvents();
+
         // adding main container to view
-        this.getChildren().addAll(headerContainer, this.tableContainer);
+        this.getChildren().addAll(headerContainer, this.storedTablesContainer);
 
         // formatting
-        this.setAlignment(Pos.TOP_LEFT);
+        this.setAlignment(Pos.CENTER_LEFT);
         this.setPadding(new Insets(10,10,10,10));
+    }
 
-        /////////////
-        // ACTIONS //
-        /////////////
-
-         // action for load file button
-         this.loadTableButton.setOnAction((e) -> {
-            // configuring the file chooser to load a new file
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load CSV File");
-            fileChooser.getExtensionFilters().addAll(EditorFileType.TABLE.getExtensionFilter());
-
-            // showing the open dialog
-            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
-
-            // adding the file to the filestore if a file was gathered
-            if (selectedFiles != null) {
-                for(File file : selectedFiles){
-                    try{
-                        // adding the table
-                        this.addTable(file);
-
-                        // enabling clear store button (as tables now present)
-                        this.clearStoreButton.setDisable(false);
-                    }
-                    // handling error
-                    catch(Exception ex){
-                        ErrorAlert.showErrorAlert(this.getScene().getWindow(), ex);
-                    }
-                }
-            }
+    /**
+     * Defines the event handling for the events that can occur 
+     * within the control.
+     */
+    private void configureEvents(){
+        // Load Table
+        this.loadTableButton.setOnAction((e) -> {
+            // opening files through system controller
+            SystemController.getInstance().openFileIntoTableStore();
         });
 
-        // action for clear store button
+        // Clear Store
         this.clearStoreButton.setOnAction((e) -> {
             // showing the confirmation button pop-up window
             boolean clearConfirmed = this.clearStoreButton.showConfirmationWindow(this.getScene().getWindow());
@@ -133,7 +112,7 @@ public class TableStore extends VBox{
             // clearing if the use confirmed the clear
             if(clearConfirmed){
                 // clearing
-                this.clearTables();
+                this.clearStoredTables();
 
                 // disabling clear store button (no tables in system)
                 this.clearStoreButton.setDisable(true);
@@ -141,84 +120,59 @@ public class TableStore extends VBox{
         });
     }
 
-    ///////////////////
-    // ADDING TABLES //
-    ///////////////////
+    ////////////////////////////////
+    // CONFIIGURING STORED TABLES //
+    ////////////////////////////////
 
     /**
-     * Adds a file into the Filestore.
+     * Adds the new stored table into the TableStore.
      * 
-     * @param file The file to be added into the store.
-     * @throws Exception If a table with this name is already in the store.
+     * @param storedTable The TableStore the new stored table is contained within.
      */
-    public void addTable(File file) throws Exception{
-        // testing if a file with this name already exists
-        for(Table table : this.tables){
-            if(table.getName().equals(file.getName())){
-                throw new Exception("There is already a table with the name '" + file.getName() + "' in the store.");
-            }
+    public void addStoredTable(StoredTable storedTable){
+        // adding into list
+        this.storedTables.add(storedTable);
+
+        // adding into container
+        this.storedTablesContainer.getChildren().add(storedTable);
+    }
+
+    /**
+     * Removes a StoredTable from the TableStore.
+     * 
+     * @param storedTable The StoredTable being removed from the system.
+     */
+    public void removeStoredTable(StoredTable storedTable){
+        // removing from list
+        this.storedTables.remove(storedTable);
+
+        // removing from editor
+        SystemController.getInstance().removeStoredTableFromEditor(storedTable);
+
+        // removing from container
+        this.storedTablesContainer.getChildren().remove(storedTable);
+    }
+
+    /**
+     * Removes all StoredTables from the TableStore.
+     */
+    private void clearStoredTables(){
+        // removing stored tables from editor
+        for(StoredTable storedTable : this.storedTables){
+            SystemController.getInstance().removeStoredTableFromEditor(storedTable);
         }
-
-        // creating object
-        Table table = new Table(this, file);
-
-        // adding loaded file to container
-        this.tableContainer.getChildren().addAll(table);
-
-        // adding loaded file to list
-        this.tables.add(table);
+        
+        // clearing table container
+        this.storedTablesContainer.getChildren().clear();
     }
-
-    /**
-     * Adds a table into the store.
-     * 
-     * @param name The name of the table being added.
-     * @throws Exception Thrown if the 
-     */
-    public void addTable(String name) throws Exception{
-        // testing if a file with this name already exists
-        for(Table table : this.tables){
-            if(table.getName().equals(name)){
-                throw new Exception("There is already a table with the name '" + name + "' in the store.");
-            }
-        }
-
-        // adding the table into the filestore
-        // TODO
-    }
-
-    ////////////////////
-    // REMOVING FILES //
-    ////////////////////
-
-    /**
-     * Removed a loaded table from the store.
-     * 
-     * @param table The Table being removed from the store.
-     */
-    public void removeTable(Table table){
-        // removing table from the container
-        this.tableContainer.getChildren().remove(table);
-
-        // removing table from the list
-        this.tables.remove(table);
-    }
-
-    /**
-     * Removes all tables from the store.
-     */
-    public void clearTables(){
-        // removing loaded files from container
-        this.tableContainer.getChildren().clear();
-
-        // removing loaded files from list
-        this.tables.clear();
-    }
-
 
     /////////////////////////
     // GETTERS AND SETTERS //
     /////////////////////////
+
+    public ArrayList<StoredTable> getStoredTables(){
+        return this.storedTables;
+    }
 
     public ArrayList<File> getFiles(){
 
@@ -226,15 +180,11 @@ public class TableStore extends VBox{
         ArrayList<File> files = new ArrayList<File>();
 
         // gathering all loaded files
-        for(Table loadedFile : this.tables){
+        for(StoredTable loadedFile : this.storedTables){
             files.add(loadedFile.getFile());
         }
 
         // returning files
         return files;
-    }
-
-    public ArrayList<Table> getTables(){
-        return this.tables;
     }
 }
