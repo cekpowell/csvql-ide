@@ -8,7 +8,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
+import javafx.stage.Window;
 import Controller.SystemController;
 import Model.FileType;
 import View.Tools.InputForm;
@@ -25,14 +25,10 @@ public class NewFileForm extends InputForm{
     private static final int height = 215;
     private static final String confirmText = "Create";
     private static final String cancelText = "Cancel";
-    private static final String initialNote = "Note: Do not include the file extension in the name!";
     private static final String noNameNote = "Error: You must provide a filename!";
-    private static final String fileExtNote = "Error: You must not include a file extension!";
+    private static final String FILENAME_DELIM = " ";
     
     // member variables
-    private ToggleGroup fileType;
-    private RadioButton program;
-    private RadioButton table;
     private TextField filename;
     private Label noteLabel;
 
@@ -46,35 +42,18 @@ public class NewFileForm extends InputForm{
     public NewFileForm(){
         // initializing
         super(title, width, height, confirmText, cancelText, false);
-        this.fileType = new ToggleGroup();
-        this.program = new RadioButton("Program");
-        this.table = new RadioButton("Table");
         this.filename = new TextField();
-        this.noteLabel = new Label(initialNote);
-
-        // Configuring Member Variables //
-
-        // connfiguring file type radio buttons
-        this.program.setToggleGroup(this.fileType);
-        this.program.setUserData(FileType.PROGRAM);
-        this.table.setToggleGroup(this.fileType);
-        this.table.setUserData(FileType.TABLE);
-        this.fileType.selectToggle(this.program);
+        this.noteLabel = new Label();
         
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
         ///////////////////////////
 
-        // container for radio buttons
-        HBox fileTypeContainer = new HBox(this.program, this.table);
-        fileTypeContainer.setAlignment(Pos.CENTER);
-        fileTypeContainer.setSpacing(10);
-
         // Filename label
         Label filenameLabel = new Label("Filename:");
 
         // contanier for all items
-        VBox container = new VBox(fileTypeContainer, filenameLabel, this.filename, this.noteLabel);
+        VBox container = new VBox(filenameLabel, this.filename, this.noteLabel);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(10));
         container.setSpacing(10);
@@ -87,6 +66,24 @@ public class NewFileForm extends InputForm{
         this.setContent(container);
     }
 
+    /////////////////////
+    // DISPLAYING FORM //
+    /////////////////////
+
+    /**
+     * Creates a NewFileForm instance and displays it on the screen.
+     * 
+     * @param owner The Window the NewFileForm will be displayed into.
+     */
+    public static void showForm(Window owner){
+        // creating input form
+        NewFileForm newFileForm = new NewFileForm();  
+        newFileForm.initOwner(owner);
+
+        // displaying input form
+        newFileForm.show();
+    }
+
     //////////////////////////////
     // SUBMITTING FORM CONTENTS //
     //////////////////////////////
@@ -96,30 +93,25 @@ public class NewFileForm extends InputForm{
      * are not.
      */
     public void submit(){
+        // CHECKING INPUT //
+
         // filename cannot be null
         if(this.filename.getText().equals("")){
             // creating error label
             this.noteLabel.setText(noNameNote);
         }
-        // filename cannot have an extension
-        else if (this.filename.getText().contains(".")){
-            // creating error label
-            this.noteLabel.setText(fileExtNote);
-        }
-        // checks passed
+        
+        // CHECKS COMPLETE //
         else{
             // creating a new EditorTab through system controller
             try{
-                // creating new program through system controller
-                if(this.fileType.getSelectedToggle() == this.program){
+                // gathering list of file names
+                String[] filenames = this.filename.getText().split(NewFileForm.FILENAME_DELIM);
+
+                // iterating through list of filenames
+                for(String filename : filenames){
                     // creating new program through system controller
-                    SystemController.getInstance().createNewEditorTab(this.filename.getText() + FileType.PROGRAM.getDefaultExtension(), // NAME
-                                                                       FileType.PROGRAM);                                                  // FILE TYPE
-                }
-                else{
-                    // creating new table through system controller
-                    SystemController.getInstance().createNewEditorTab(this.filename.getText() + FileType.TABLE.getDefaultExtension(), // NAME
-                                                                       FileType.TABLE);                                                // FILE TYPE
+                    SystemController.getInstance().createNewFile(filename);
                 }
 
                 // closing the form

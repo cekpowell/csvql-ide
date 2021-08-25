@@ -4,7 +4,7 @@ import java.io.File;
 
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-
+import Controller.ProgramRunner;
 import Controller.SystemController;
 import Model.FileType;
 import Model.Images;
@@ -23,10 +23,32 @@ public class ProgramTab extends EditorTab{
     //////////////////
 
     /**
+     * Class constructor
+     * 
+     * @param editorTabContainer The container associated with the ProgramTab.
+     * @param name The name of the program.
+     * @param file The file associated with the program.
+     */
+    public ProgramTab(EditorTabContainer editorTabContainer, String name, File file){
+        // initializing
+        super(editorTabContainer, name, file, FileType.PROGRAM);
+        this.runButton = new Button("Run", new ImageView(Images.RUN));
+
+        /////////////////
+        // CONFIGURING //
+        /////////////////
+
+        // event handling
+        this.configureEvents();
+
+        // adding run button to toolbar
+        this.getEditorTabToolbar().addRightContainerWithSep(this.runButton);
+    }
+
+    /**
      * Class constructor.
      * 
      * @param editorTabContainer The container associated with the ProgramTab.
-     * @param fileContainer The container associated with this program.
      * @param name The name of the program.
      */
     public ProgramTab(EditorTabContainer editorTabContainer, String name){
@@ -39,7 +61,6 @@ public class ProgramTab extends EditorTab{
      * Class constructor.
      * 
      * @param editorTabContainer The container associated with the ProgramTab
-     * @param fileContainer The container associated with this ProgramTab.
      * @param file The file associated with the program.
      */
     public ProgramTab(EditorTabContainer editorTabContainer, File file){
@@ -75,7 +96,7 @@ public class ProgramTab extends EditorTab{
             // running the program through the system controller
             try{
                 // trying to run the program
-                SystemController.getInstance().runProgram(this);
+                ProgramRunner.runProgramTab(this);
             }
             catch(Exception ex){
                 // showing error window

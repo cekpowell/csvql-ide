@@ -18,6 +18,19 @@ public class TableTab extends EditorTab{
     //////////////////
 
     /**
+     * Class constructor
+     * 
+     * @param editorTabContainer The container associated with the ProgramTab.
+     * @param name The name of the program.
+     * @param file The file associated with the program.
+     */
+    public TableTab(EditorTabContainer editorTabContainer, String name, File file, StoredTable storedTable){
+        // initializing
+        super(editorTabContainer, name, file, FileType.TABLE);
+        this.storedTable = storedTable;
+    }
+
+    /**
      * Class constructor.
      * 
      * @param editorTabContainer The container associated with the ProgramTab.

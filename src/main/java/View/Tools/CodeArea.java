@@ -130,6 +130,6 @@ public class CodeArea extends StackPane {
 
     public void setCode(String code) {
         // updating the code-editor
-        this.webview.getEngine().loadContent(this.updateCodeMirrorTemplate(code ));
+        this.webview.getEngine().loadContent(this.updateCodeMirrorTemplate(code));
     }
 }

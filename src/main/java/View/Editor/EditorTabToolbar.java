@@ -7,6 +7,7 @@ import javafx.scene.image.ImageView;
 import Controller.SystemController;
 import Model.Images;
 import View.Tools.PopUpWindow;
+import View.Forms.RenameFileForm;
 import View.Tools.AppToolbar;
 
 /**
@@ -95,8 +96,8 @@ public class EditorTabToolbar extends AppToolbar{
 
         // rename
         this.renameButton.setOnAction((e) -> {
-            // renaming the file through the system controller
-            SystemController.getInstance().renameEditorTab(this.editorTab);
+            // displaying renaming file form
+            RenameFileForm.showForm(this.getScene().getWindow(), this.editorTab);
         });
 
         // undo

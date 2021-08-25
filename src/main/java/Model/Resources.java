@@ -1,12 +1,14 @@
 package Model;
 
+import java.io.File;
+
 /**
  * Defines property that contains the path to the system resources.
  */
 public class Resources {
 
     // member variables
-    public static String CODE_MIRROR_PATH = FileType.class.getClassLoader().getResource("codeMirror/").toString(); 
+    public static String CODE_MIRROR_PATH = FileType.class.getClassLoader().getResource("codeMirror/").toExternalForm(); 
     public static String IMG_PATH = FileType.class.getClassLoader().getResource("img/").toString(); 
     
     /**

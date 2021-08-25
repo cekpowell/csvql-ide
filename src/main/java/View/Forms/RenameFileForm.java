@@ -5,7 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-
+import javafx.stage.Window;
 import Controller.SystemController;
 import Model.FileType;
 import View.Editor.EditorTab;
@@ -69,6 +69,24 @@ public class RenameFileForm extends InputForm{
         this.setContent(container);
     }
 
+    /////////////////////
+    // DISPLAYING FORM //
+    /////////////////////
+
+    /**
+     * Creates a NewFileForm instance and displays it on the screen.
+     * 
+     * @param owner The Window the NewFileForm will be displayed into.
+     */
+    public static void showForm(Window owner, EditorTab editorTab){
+        // configuring rename window
+        RenameFileForm renameFileForm = new RenameFileForm(editorTab);
+        renameFileForm.initOwner(owner);
+
+        // displaying rename window
+        renameFileForm.show();
+    }
+
     //////////////////////////////
     // SUBMITTING FORM CONTENTS //
     //////////////////////////////
@@ -107,7 +125,7 @@ public class RenameFileForm extends InputForm{
             }
             catch(Exception ex){
                 // displaying error alert
-                PopUpWindow.showErrorWindow(this.getOwner(), "Unable to rename file.");
+                PopUpWindow.showErrorWindow(this.getOwner(), ex);
             }
         }
     }

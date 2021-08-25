@@ -1,5 +1,10 @@
 package Model;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import Controller.FileManager;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser.ExtensionFilter;
 
@@ -14,6 +19,8 @@ public enum FileType {
     PROGRAM(
             // DEFAULT EXTENSION
             ".cql",
+            // ALL EXTENSIONS
+            new ArrayList<String>(Arrays.asList(".cql")),
             // EXTENSION FILTERS
             new ExtensionFilter[] {new ExtensionFilter("CSVQL Program (*.cql)", "*.cql")},
             // CODE MIRROR TEMPLATE
@@ -52,9 +59,10 @@ public enum FileType {
     TABLE(
             // DEFAULT EXTENSION
             ".csv",
+            // ALL EXTENSIONS
+            new ArrayList<String>(Arrays.asList(".csv", ".txt")),
             // EXTENSION FILTERS
             new ExtensionFilter[] {new ExtensionFilter("CSV Table (*.csv)", "*.csv"),
-                                   new ExtensionFilter("TSV Table (*.tsv)", "*.tsv"),
                                    new ExtensionFilter("Text Table (*.txt)", "*.txt")}
             ,
             // CODE MIRROR TEMPLATE
@@ -87,6 +95,8 @@ public enum FileType {
     TERMINAL(
             // DEFAULT EXTENSION
             ".csv",
+            // ALL EXTENSIONS
+            new ArrayList<String>(Arrays.asList(".csv", ".txt")),
             // EXTENSION FILTERS
             new ExtensionFilter[] {new ExtensionFilter("CSV Table (*.csv)", "*.csv"),
                                    new ExtensionFilter("TSV Table (*.tsv)", "*.tsv"),
@@ -121,6 +131,7 @@ public enum FileType {
 
     // member variables
     private String defaultExtension;
+    private ArrayList<String> allExtensions;
     private ExtensionFilter[] extensionFilters;
     private String codeMirrorTemplate;
     private Image graphic;
@@ -132,12 +143,115 @@ public enum FileType {
      * @param extensionFilter The extension filter associated with the type.
      * @param codeMirrorTemplate The CodeMirror template associated with the type.
      */
-    private FileType(String defaultExtension, ExtensionFilter[] extensionFilters, String codeMirrorTemplate, Image graphic, Image graphicUnsaved){
+    
+    /**
+     * Constructor.
+     * 
+     * @param defaultExtension The default/initial extension associated with this filetype.
+     * @param allExtensions All extensions associated with this file type.
+     * @param extensionFilter The extension filter associated with the type.
+     * @param codeMirrorTemplate The CodeMirror template associated with the type.
+     * @param graphic The Image assocciated with this filetype.
+     * @param graphicUnsaved The image associated with this filetype being in the unsaved status.
+     */
+    private FileType(String defaultExtension, ArrayList<String> allExtensions, ExtensionFilter[] extensionFilters, String codeMirrorTemplate, Image graphic, Image graphicUnsaved){
+        // initializing
         this.defaultExtension = defaultExtension;
+        this.allExtensions = allExtensions;
         this.extensionFilters = extensionFilters;
         this.codeMirrorTemplate = codeMirrorTemplate;
         this.graphic = graphic;
         this.graphicUnsaved = graphicUnsaved;
+    }
+
+    //////////////////////////
+    // GETTING TYPE OF FILE //
+    //////////////////////////
+
+    /**
+     * Attempts to gather the FileType of a given file from it's name. Works by
+     * comparing the file extension of the filename to the extensions documented
+     * in the enum class.
+     * 
+     * Returns null if no matching filetype is found.
+     * 
+     * @param filename The name of the file who's type is being checked.
+     * @return The FileType associated with the given filename.
+     */
+    public static FileType getFileType(String filename){
+        // PROGRAM
+        if(FileType.PROGRAM.fileHasSameFileType(filename)){
+            return FileType.PROGRAM;
+        }
+        // TABLE
+        if(FileType.TABLE.fileHasSameFileType(filename)){
+            return FileType.TABLE;
+        }
+        // TERMINAL
+        if(FileType.TERMINAL.fileHasSameFileType(filename)){
+            return FileType.TERMINAL;
+        }
+        // NO MATCHING FILETYPE
+        else{
+            return null;
+        }
+    }
+
+    /**
+     * Attempts to gather the FileType of a given file from it's name. Works by
+     * comparing the file extension of the filename to the extensions documented
+     * in the enum class.
+     * 
+     * Returns null if no matching filetype is found.
+     * 
+     * @param filename The name of the file who's type is being checked.
+     * @return The FileType associated with the given filename.
+     */
+    public static FileType getFileType(File file){
+        // running the method on the filename
+        return FileType.getFileType(file.getName());
+    }
+
+    /////////////////////////////////////
+    // CHECKING FILE HAS SAME FILETYPE //
+    /////////////////////////////////////
+
+    /**
+     * Determines if the given filename has the same type as the enumerator
+     * based on the file's extension.
+     * 
+     * @param file The file who's type is being checked against the enumerator.
+     * @return True if the file and enumerator have the same type, false otherwise.
+     */
+    public boolean fileHasSameFileType(String filename){
+        // getting file extension
+        try{
+            String fileExtension = FileManager.getFileExtensionWith(filename);
+
+            // determining if the file types are  match
+            if(this.allExtensions.contains("." + fileExtension)){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+        catch(Exception e){
+            // exception thrown when file does not have an extension - so no match possible
+            return false;
+        }
+    }
+
+    /**
+     * Determines if the given file has the same type as the enumerator file
+     * based on the file's extension.
+     * 
+     * @param file The file who's type is being checked against the enumerator.
+     * @return True if the file and enumerator have the same type, false otherwise.
+     */
+    public boolean fileHasSameFileType(File file){
+        // running the method on the filename
+        return this.fileHasSameFileType(file.getName());
     }
 
     /////////////////////////
@@ -146,6 +260,10 @@ public enum FileType {
 
     public String getDefaultExtension(){
         return this.defaultExtension;
+    }
+
+    public ArrayList<String> getAllExtensions(){
+        return this.allExtensions;
     }
 
     public ExtensionFilter[] getExtensionFilters(){

@@ -74,7 +74,7 @@ public class StoredTable extends HBox{
         this.openInEditorButton.setOnAction((e) -> {
             // placing the file within the editor
             try{
-                SystemController.getInstance().createNewEditorTab(this);
+                SystemController.getInstance().openStoredTableIntoEditor(this);
             }
             // handling error
             catch (Exception ex) {

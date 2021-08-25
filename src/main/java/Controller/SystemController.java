@@ -1,19 +1,11 @@
 package Controller;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import javafx.stage.FileChooser;
 
 import Model.FileType;
 import View.App.Dashboard;
@@ -21,10 +13,7 @@ import View.App.DashboardToolbar;
 import View.Editor.EditorTab;
 import View.Editor.ProgramTab;
 import View.Editor.TableTab;
-import View.Forms.NewFileForm;
-import View.Forms.RenameFileForm;
 import View.TableStore.StoredTable;
-import View.Tools.PopUpWindow;
 
 /**
  * Serves as the main controller for the application. Adopts the 
@@ -32,11 +21,7 @@ import View.Tools.PopUpWindow;
  * data flow.
  */
 public class SystemController {
-
-    // constants
-    private static final String interpreterExe = "csvql-no-colour";
-    private static final String cqlExtension = "cql";
-    
+        
     // local variables
     private static SystemController instance = null;
     private DashboardToolbar toolbar;
@@ -92,147 +77,94 @@ public class SystemController {
         }
     }
 
-    //////////////////////////
-    // CREATING EDITOR TABS //
-    //////////////////////////
+    ////////////////////////
+    // CREATING NEW FILES //
+    //////////////////////// 
 
     /**
-     * Displays a pop-up that allows the user to create a new CQL program or table.
-     */
-    public void createNewFile(){
-        // creating input form
-        NewFileForm newProgramForm = new NewFileForm();  
-        newProgramForm.initOwner(this.dashboard.getScene().getWindow());
-
-        // displaying input form
-        newProgramForm.show();
-    }
-
-    /**
-     * Displays a pop-up that allows the user to load files into the system
-     * editor.
-     */
-    public void openFile(){
-        // configuring the file chooser to load a new file into the system
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open File");
-        fileChooser.getExtensionFilters().addAll(FileType.PROGRAM.getExtensionFilters());
-        fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
-
-        // showing the open dialog
-        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.dashboard.getScene().getWindow());
-
-        // checking if files were opened
-        if (selectedFiles != null) {
-            // iterating through selected files
-            for(File file : selectedFiles){
-                try{
-                    // CQL Program opened
-                    if(FilenameUtils.getExtension(file.getName()).equals(SystemController.cqlExtension)){
-                        // adding the program to the system
-                        this.createNewEditorTab(file, FileType.PROGRAM); 
-                    }
-
-                    // CSV, TSV or Textfile opened
-                    else{
-                        // adding the table into the system
-                        this.createNewEditorTab(file, FileType.TABLE);
-                    }
-                }
-                // handling error
-                catch(Exception ex){
-                    PopUpWindow.showErrorWindow(this.dashboard.getScene().getWindow(), ex);
-                }
-            }
-        }
-    }
-
-    /**
-     * Creates a new EditorTab instance using the provided name and
-     * type.
+     * Attempts to crate a new file within the system using the provided name.
      * 
-     * @param name The name of the new EditorTab
-     * @param type
+     * @param filename The name of the new file within the system.
      */
-    public void createNewEditorTab(String name, FileType type) throws Exception{
-        // checks
-        if(this.fileNameIsInUse(name)){
-            throw new Exception("This filename is already in use in the system!");
+    public void createNewFile(String filename) throws Exception{
+        // VALIDATING //
+
+        Validator.validateNewFile(filename);
+
+        // VALIDATED //
+
+        // gathering file type
+        FileType fileType = FileType.getFileType(filename);
+
+        // handling loading of file based on it's filetype
+        switch(fileType){
+            case PROGRAM:
+                // creating new program tab
+                ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null);
+
+                // adding program tab to editor
+                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
+
+                break;
+            case TABLE:
+                // creating new TableTab
+                TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null, null);
+
+                // adding table tab to editor
+                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
+
+                break;
+            case TERMINAL:
+                break;
         }
-
-        // Checks Complete //
-
-        // editortab object
-        EditorTab editorTab;
-
-        // New Tab is Program
-        if(type == FileType.PROGRAM){
-            // creating new program tab
-            editorTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), name);
-        }
-        // New Tab is Table
-        else{
-            // creating new table tab
-            editorTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), name, null); // null as no stored table yet
-        }
-
-        // adding the editor tab into the system
-        this.dashboard.getEditor().getEditorTabContainer().addEditorTab(editorTab);
     }
 
-    /**
-     * Creates a new EditorTab instance using the provided file and
-     * type
-     * 
-     * @param name The file that will be associated with the editor tab.
-     * @param type The Type of editor tab being createed.
-     */
-    public void createNewEditorTab(File file, FileType type) throws Exception{
-        // checks
-        if(this.fileNameIsInUse(file.getName())){
-            throw new Exception("This filename is already in use in the system!");
-        }
-
-        // Checks Complete
-
-        EditorTab editorTab;
-
-        // New Tab is Program
-        if(type == FileType.PROGRAM){
-            // creating new ProgramTab
-            editorTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), file);
-        }
-        // New Tab is Table (need to create StoredTable object for the TableStore)
-        else{
-            // creating and storing new stored table
-            StoredTable storedTable = this.createAndStoreNewStoredTable(file);
-
-            // creating new TableTab with the file and StoredTable
-            editorTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), file, storedTable);
-        }
-
-        // adding the generated EditorTab into the system
-        this.dashboard.getEditor().getEditorTabContainer().addEditorTab(editorTab);
-    }
+    ///////////////////////////////////
+    // LOADING FILES INTO THE SYSTEM //
+    ///////////////////////////////////
 
     /**
-     * Creates a new EditorTab using the content from a stored table.
+     * Attempts to load a given number of files into the system.
      * 
-     * @param storedTable The StoredTable the EditorTab is being loaded from.
+     * @param file The File being loaded into the system
+     * @param fileType The type(s) of the file being loaded into the system.
      */
-    public void createNewEditorTab(StoredTable storedTable) throws Exception{
-        // checks
-        if(this.fileNameIsInUseInEditor(storedTable.getName())){
-            throw new Exception("There is already a file with this name in the editor!");
+    public void loadFile(File file, FileType... fileTypes) throws Exception{
+        // VALIDATING //
+
+        Validator.validateNewFile(file);
+
+        // VALIDATED //
+
+        // gathering file type
+        FileType fileType = FileType.getFileType(file);
+
+        // handling loading of file based on it's filetype
+        switch(fileType){
+            case PROGRAM:
+                // creating new program tab
+                ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), file);
+
+                // adding program tab to editor
+                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
+
+                break;
+                
+            case TABLE:
+                // creating and storing new stored table
+                StoredTable storedTable = this.createAndStoreNewStoredTable(file);
+
+                // creating new TableTab with the file and StoredTable
+                TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), file, storedTable);
+
+                // adding program tab to editor
+                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
+
+                break;
+
+            case TERMINAL:
+                break;
         }
-        
-        // Checks Complete //
-
-        // creating new TableTab
-        TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), storedTable.getFile(), storedTable);
-
-        // adding TableTab to editor
-        this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
     }
 
     ///////////////////
@@ -240,37 +172,55 @@ public class SystemController {
     ///////////////////
 
     /**
-     * Displays a pop-up that allows the user to load tables into the table store.
-     * Tables that are loaded using this method are not loaded directly into the editor.
+     * Attempts to load a given number of files into the TableStore.
+     * 
+     * @param file The Files being loaded into the TableStore
      */
-    public void openFileIntoTableStore(){
-        // configuring the file chooser to load a new file into the system
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Table");
-        fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
+    public void loadFileIntoTableStore(File file) throws Exception{
+        // VALIDATING //
 
-        // showing the open dialog
-        List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.dashboard.getScene().getWindow());
+        Validator.validateNewTableStoreFile(file);
 
-        // checking if files were opened
-        if (selectedFiles != null) {
-            // iterating through selected files
-            for(File file : selectedFiles){
-                try{
-                    // checking file is not present in system already
-                    if(this.fileNameIsInUse(file.getName())){
-                        throw new Exception("The filename '" + file.getName() + "' is already in use in the system!");
-                    }
+        // VALIDATED //
 
-                    // creating and storing new stored table
-                    this.createAndStoreNewStoredTable(file);
-                }
-                // handling error
-                catch(Exception ex){
-                    PopUpWindow.showErrorWindow(this.dashboard.getScene().getWindow(), ex);
-                }
-            }
-        }
+        // Creating new StoredTable and loading it into the TableStore
+        this.createAndStoreNewStoredTable(file);
+    }
+
+        /**
+     * Creates a new StoredTable using the provided file and adds 
+     * it to the application's TableStore.
+     * 
+     * @param file The file associated with the stored table.
+     * @return The StoredTable that was created and added to the TableStore.
+     */
+    private StoredTable createAndStoreNewStoredTable(File file){
+        // creating new StoredTable
+        StoredTable storedTable = new StoredTable(this.dashboard.getTableStore(), file);
+
+        // adding new StoredTable into the TableStore
+        this.dashboard.getTableStore().addStoredTable(storedTable);
+
+        return storedTable;
+    }
+
+    /**
+     * Creates a new EditorTab using the content from a stored table.
+     * 
+     * @param storedTable The StoredTable the EditorTab is being loaded from.
+     */
+    public void openStoredTableIntoEditor(StoredTable storedTable) throws Exception{
+        // VALIDATING //
+
+        Validator.validateOpenStoredTableInEditor(storedTable);
+
+        // VALIDATED //
+
+        // creating new TableTab
+        TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), storedTable.getFile(), storedTable);
+
+        // adding TableTab to editor
+        this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
     }
 
     /**
@@ -308,23 +258,6 @@ public class SystemController {
         }
     }
 
-    /**
-     * Creates a new StoredTable instance and adds it to the application
-     * TableStore.
-     * 
-     * @param file The file associated with the stored table.
-     * @return The StoredTable that was created and added to the TableStore.
-     */
-    private StoredTable createAndStoreNewStoredTable(File file){
-        // creating new StoredTable
-        StoredTable storedTable = new StoredTable(this.dashboard.getTableStore(), file);
-
-        // adding new StoredTable into the TableStore
-        this.dashboard.getTableStore().addStoredTable(storedTable);
-
-        return storedTable;
-    }
-
     ///////////////////////
     // SAVING EDITOR TAB //
     ///////////////////////
@@ -340,10 +273,11 @@ public class SystemController {
 
         // making sure file was selected
         if(chosenFile != null){
-            // checking savefile name is valid
-            if(!this.newFileNameIsValid(editorTab, chosenFile.getName())){
-                throw new Exception("This filename is already in use in the system!");
-            }
+            // VALIDATING //
+
+            Validator.validateRenameFile(editorTab, chosenFile.getName());
+
+            // VALIDATED //
 
             // gathering content to be saved
             String content = editorTab.getCodeArea().getCode();
@@ -404,21 +338,6 @@ public class SystemController {
     /////////////////////////
 
     /**
-     * Renames the provided EditorTab. Displays a pop-up that allows the user to
-     * enter in the new name for the associated file.
-     * 
-     * @param editorTab The editorTab being renamed.
-     */
-    public void renameEditorTab(EditorTab editorTab){
-        // configuring rename window
-        RenameFileForm renameFileForm = new RenameFileForm(editorTab);
-        renameFileForm.initOwner(this.dashboard.getScene().getWindow());
-
-        // displaying rename window
-        renameFileForm.show();
-    }
-
-    /**
      * Attempts to change the name of the provided EditorTab to the
      * provided new name.
      * 
@@ -428,10 +347,11 @@ public class SystemController {
      * is already in use).
      */
     public void renameEditorTab(EditorTab editorTab, String newFilename) throws Exception{
-        // checking name is suitable
-        if(!this.newFileNameIsValid(editorTab, newFilename)){
-            throw new Exception("This name is already in use in the system!");
-        }
+        // VALIDATING //
+
+        Validator.validateRenameFile(editorTab, newFilename);
+
+        // VALIDATED //
 
         // EditorTab has Associated File 
         if(editorTab.getFile() != null){
@@ -461,252 +381,11 @@ public class SystemController {
                 }
             }
         }
-        // EditorTab has no file
+        // EditorTab has no file - just need to update it's display information
         else{
             // updating tab information
             editorTab.setName(newFilename);
         }
-    }
-
-    //////////////////////
-    // RUNNING PROGRAMS //
-    //////////////////////
-
-    /**
-     * Runs the provided program and passes the result onto the Terminal.
-     * 
-     * @param program The program being run.
-     * 
-     * @throws Exception Thrown if the program could not be run.
-     */
-    public void runProgram(ProgramTab program) throws Exception{
-        // GATHERINNG NEEDED FILES //
-
-        // list to store needed files
-        ArrayList<File> neededFiles = new ArrayList<File>();
-
-        // interpreter file
-        neededFiles.add(FileUtils.toFile(SystemController.class.getClassLoader().getResource("interpreter/" + SystemController.interpreterExe)));
-
-        // program file
-        if(program.getFile() != null){
-            neededFiles.add(program.getFile());
-        }
-        else{
-            throw new Exception("The program has no saved data - it cannot be run.");
-        }
-
-        // Stored Tables
-        for(StoredTable storedTable : this.dashboard.getTableStore().getStoredTables()){
-            neededFiles.add(storedTable.getFile());
-        }
-
-        // WRITING NEEDED FILES INTO TEMP DIRECTORY //
-
-        // making tmp directory
-        File tmpDir = new File("tmp");
-        if(!tmpDir.exists()){
-            tmpDir.mkdir();
-        }
-
-        // iterating through list
-        for(File file : neededFiles) {
-            // copying each file into the tmp directory
-            Files.copy(file.toPath(), 
-                       (new File("tmp/" + file.getName())).toPath(), 
-                       StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        // RUNNING INTERPRETER //
-
-        /**
-         * Try block neeeded so that can still delete the tmp directory
-         * if the interpreter execution fails.
-         */
-        try{
-            // gathering output
-            String output = this.getProgramOutput(program.getName());
-
-            // displaying output into terminal
-            this.dashboard.getTerminal().displayProgramOutput(output);
-        }
-        catch(Exception e){
-            throw new Exception();
-        }
-
-        // removing temporary directory
-        FileUtils.deleteDirectory(tmpDir);
-    }
-
-    /**
-     * Gathers the output of executing a provided CSVQL program.
-     * 
-     * @param programName The name of the CSVQL program to be executed.
-     */
-    private String getProgramOutput(String programName) throws Exception{
-
-        // command to be run
-        String[] command = {"bash", "-c", 
-                            "chmod +x " + SystemController.interpreterExe +  
-                            " && ./" + SystemController.interpreterExe + " " + programName};
-
-        // process builder to run the command
-        ProcessBuilder pb = new ProcessBuilder(command).redirectErrorStream(true);
-        pb.directory(new File("tmp/"));
-
-        // starting the process
-        Process p = pb.start();
-
-        // gathering the process output
-        String response = this.readProcessOutput(p);
-            
-        return response;
-    }
-
-    /**
-     * Reads the response from the command. Please note that this works only
-     * if the process returns immediately.
-     * 
-     * @param p The process for whiich the output is being read.
-     * 
-     * @return The output from the process.
-     * 
-     * @throws Exception If the process output could not be gathered.
-     */
-    private String readProcessOutput(Process p) throws Exception{
-        // string to hold response
-        ArrayList<String> responseLines = new ArrayList<String>();
-
-        // reader for response
-        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-        // iterating through response
-        String line;
-        while ((line = reader.readLine()) != null) {
-            responseLines.add(line);
-        }
-        reader.close();
-
-        // concatinating response
-        String response = String.join("\n", responseLines);
-
-        // returning the response
-        return response;
-    }
-
-    ////////////////////
-    // HELPER METHODS //
-    ////////////////////
-
-    /**
-     * Determines if a given file name is already in use within
-     * the system. Used to determine if a filename is acceptable when
-     * creating/loading a new file into the system.
-     * 
-     * Should not be used when determining if a save file name is 
-     * acceptable, as it will return true for the file being saved.
-     * 
-     * @param filename The name of the file.
-     * @return True if name is taken, false if not.
-     */
-    private boolean fileNameIsInUse(String filename){
-        return (this.fileNameIsInUseInEditor(filename) || this.fileNameIsInUseInTableStore(filename));
-    }
-
-    /**
-     * Determines if there are any tabs open in the Editor that have the 
-     * provided filename.
-     * 
-     * @param filename The filename being checked for.
-     * @return True if at least one tab has the filename, false otherwise.
-     */
-    private boolean fileNameIsInUseInEditor(String filename){
-        // iterating through editor tabs
-        for(EditorTab editorTab : this.dashboard.getEditor().getEditorTabContainer().getEditorTabs()){
-            // checking for match
-            if(editorTab.getName().equals(filename)){
-                return true;
-            }
-        }
-
-        // no match found - filename not in use
-        return false;
-    }
-
-    /**
-     * Determines if there are any StoredTables in the TableStore that have
-     * the provided filename.
-     * 
-     * @param filename The filename being checked for.
-     * @return True if at least one StoredTable has the filename, false
-     * otherwise.
-     */
-    private boolean fileNameIsInUseInTableStore(String filename){
-        // iterating through stored tables
-        for(StoredTable storedTable : this.dashboard.getTableStore().getStoredTables()){
-            // checking for match
-            if(storedTable.getName().equals(filename)){
-                return true;
-            }
-        }
-
-        // no match found - filename not in use
-        return false;
-    }
-
-    /**
-     * Determines if a new file name is valid within the system (saveAs and rename).
-     * A name is valid if it is not in use by any other file in the system other 
-     * than the one being saved/renamed.
-     * 
-     * @param editortab The EditorTab associated with the file being saved.
-     * @param newFilename The name being checked.
-     * @return True if the filename is valid for saving, false if not.
-     */
-    private boolean newFileNameIsValid(EditorTab editortab, String newFilename){
-        // Editor Tabs
-        for(EditorTab eTab : this.dashboard.getEditor().getEditorTabContainer().getEditorTabs()){
-            // checking if tab is a different tab but with the same name
-            if(eTab != editortab && eTab.getName().equals(newFilename)){
-                return false;
-            }
-        }
-
-        // Stored Tables
-        for(StoredTable storedTable : this.dashboard.getTableStore().getStoredTables()){
-            // Type is Program
-            if(editortab.getFileType() == FileType.PROGRAM){
-                // program being saved cant have same name as any stored table
-                if(storedTable.getName().equals(newFilename)){
-                    return false;
-                }
-            }
-            
-            // Type is Table
-            else{
-                // casting editor tab to TableTab (as that is it's type)
-                TableTab tableTab = (TableTab) editortab;
-
-                // tabletab has no stored table
-                if(tableTab.getStoredTable()== null){
-                    // table being saved cant have same name as any stored table
-                    if(storedTable.getName().equals(newFilename)){
-                        return false;
-                    }
-                }
-
-                // table tab has stored table
-                else{
-                    // table being saved can have same name only if it is same stored table
-                    if(storedTable != tableTab.getStoredTable() && storedTable.getName().equals(newFilename)){
-                        return false;
-                    }
-                }
-            }
-        }
-
-        // no matches were found - so name is valid - returning true
-        return true;
     }
 
     /////////////////////////

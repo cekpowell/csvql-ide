@@ -1,6 +1,7 @@
 package View.TableStore;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.io.File;
 
 import javafx.geometry.Insets;
@@ -8,12 +9,17 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 
 import Controller.SystemController;
+import Model.FileType;
 import Model.Images;
 import View.App.Dashboard;
 import View.Tools.ConfirmationButton;
+import View.Tools.PopUpWindow;
 import View.Tools.SectionTitle;
 
 /**
@@ -100,8 +106,28 @@ public class TableStore extends VBox{
     private void configureEvents(){
         // Load Table
         this.loadTableButton.setOnAction((e) -> {
-            // opening files through system controller
-            SystemController.getInstance().openFileIntoTableStore();
+            // configuring the file chooser to load a new file into the system
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open File");
+            fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
+
+            // showing the open dialog
+            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
+
+            // checking if files were opened
+            if (selectedFiles != null) {
+                // iterating through all selected files
+                for(File selectedFile : selectedFiles){
+                    try{
+                        // loading file through system controller
+                        SystemController.getInstance().loadFileIntoTableStore(selectedFile);
+                    }
+                    catch(Exception ex){
+                        // handling errors
+                        PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+                    }
+                }
+            }
         });
 
         // Clear Store
@@ -117,6 +143,47 @@ public class TableStore extends VBox{
                 // disabling clear store button (no tables in system)
                 this.clearStoreButton.setDisable(true);
             }
+        });
+
+        // Files Dragged into TableStore
+        this.setOnDragOver((e) -> {
+            // checking drag did not originate from this and that drag has files
+            if (e.getGestureSource() != this && e.getDragboard().hasFiles()) {
+                // allow for file to be copied into the table store
+                e.acceptTransferModes(TransferMode.COPY);
+            }
+            // event no longer needed
+            e.consume();
+        });
+
+        // Files Dropped in TableStore
+        this.setOnDragDropped((e) -> {
+            Dragboard db = e.getDragboard();
+            boolean success = false;
+
+            // checking if file(s) were dropped
+            if (db.hasFiles()) {
+                // iterating through all selected files
+                for(File selectedFile : db.getFiles()){
+                    try{
+                        // loading file through system controller
+                        SystemController.getInstance().loadFileIntoTableStore(selectedFile);
+
+                        // updating success status
+                        success = true;
+                    }
+                    catch(Exception ex){
+                        // handling errors
+                        PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+                    }
+                }
+            }
+            /* let the source know whether the file was successfully 
+            * transferred and used */
+            e.setDropCompleted(success);
+
+            // event no longer needed
+            e.consume();
         });
     }
 

@@ -158,4 +158,32 @@ public class FileManager {
             return filename;
         }
     }
+
+    /**
+     * Returns the extension associated with the given filename. 
+     * 
+     * Assumes the extension is the sub-string that follows the final
+     * "." in the filename.
+     * 
+     * @param filename The name of the file who's extension is being gathered.
+     * @return The extension of the provided filename.
+     * @throws Exception If the file does not have an extension.
+     */
+    public static String getFileExtensionWith(String filename) throws Exception{
+        // file must have an extension (which follows ".")
+        if(!filename.contains(".")){
+            throw new Exception();
+        }
+
+        // reversing the string
+        StringBuffer buffer = new StringBuffer(filename);
+        String reverseFilename = buffer.reverse().toString();
+
+        // gathering reversed file extension (first sub-string in split on ".")
+        String reversedExtension = reverseFilename.split("\\.")[0];
+
+        // reversing the extension (back to normal)
+        buffer = new StringBuffer(reversedExtension);
+        return buffer.reverse().toString();
+    }
 }

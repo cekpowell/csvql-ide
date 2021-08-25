@@ -35,6 +35,62 @@ public abstract class EditorTab extends Tab{
     // INITIALIZING //
     //////////////////
 
+    public EditorTab(EditorTabContainer editorTabContainer, String name, File file, FileType fileType){
+        // initializinig
+        this.editorTabContainer = editorTabContainer;
+        this.name = name;
+        this.file = file;
+        this.fileType = fileType;
+        this.toolbar = new EditorTabToolbar(this);
+        this.codeArea = new CodeArea(this.fileType.getCodeMirrorTemplate(), "");
+        this.textAtLastSave = "";
+        if(this.file == null) {this.unsavedChanges = true;} else {this.unsavedChanges = false;}
+
+        // Configuring Member Variables //
+
+        if(this.file != null){
+            /**
+             * Editor tab set-up with file - need to load file content into the editor.
+             */
+            try{
+                // getting content from the file
+                String content = FileManager.getContentFromFile(this.file);
+                
+                // setting the content into the code area
+                this.codeArea.setCode(content);
+
+                // configuring the text at the last save
+                this.textAtLastSave = content;
+            }
+            // handling error
+            catch(Exception e){
+                // displaying error window
+                PopUpWindow.showErrorWindow(this.editorTabContainer.getScene().getWindow(), e);
+            }
+        }
+
+        ///////////////////////////
+        // CONTAINERS AND EXTRAS //
+        ///////////////////////////
+
+        BorderPane container = new BorderPane();
+        container.setTop(this.toolbar);
+        container.setCenter(this.codeArea);
+        
+        /////////////////
+        // CONFIGURING //
+        /////////////////
+
+        // event handling
+        this.configureEvents();
+
+        // updating tab title
+        this.updateTabTitleContent();
+
+        // content
+        this.setContent(container);
+    }
+
     /**
      * Class constuctor. Initializes a new editor tab without an associated file.
      * 

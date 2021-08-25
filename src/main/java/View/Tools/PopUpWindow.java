@@ -74,6 +74,8 @@ public class PopUpWindow {
         errorWindow.setTitle("Error");
         errorWindow.setHeaderText("Error");
         errorWindow.initOwner(owner);
+        
+        //exception.printStackTrace();
 
         // showing the error window
         errorWindow.showAndWait();

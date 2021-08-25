@@ -4,9 +4,17 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import Controller.SystemController;
+import Model.FileType;
 import Model.Images;
+import View.Tools.PopUpWindow;
+import View.Forms.*;
 
 /**
  * The main toolbar for the application.
@@ -58,13 +66,35 @@ public class DashboardToolbar extends MenuBar {
     private void configureEvents(){
         // New File
         this.newFile.setOnAction((e) -> {
-            SystemController.getInstance().createNewFile();
+            // displaying new file form
+            NewFileForm.showForm(this.getScene().getWindow());
         });
 
-        // Open Program
+        // Open File
         this.openFile.setOnAction((e) -> {
-            // opening files through the system controller
-            SystemController.getInstance().openFile();
+            // configuring the file chooser to load a new file into the system
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open File");
+            fileChooser.getExtensionFilters().addAll(FileType.PROGRAM.getExtensionFilters());
+            fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
+
+            // showing the open dialog
+            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
+
+            // checking if files were opened
+            if (selectedFiles != null) {
+                // iterating through all selected files
+                for(File selectedFile : selectedFiles){
+                    try{
+                        // loading file through system controller
+                        SystemController.getInstance().loadFile(selectedFile, FileType.PROGRAM, FileType.TABLE);
+                    }
+                    catch(Exception ex){
+                        // handling errors
+                        PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+                    }
+                }
+            }
         });
     }
 }

@@ -1,8 +1,14 @@
 package View.Editor;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import Controller.SystemController;
+import Model.FileType;
+import View.Tools.PopUpWindow;
 import javafx.scene.control.*;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 
 /**
  * View to contain all the programs being edited within the editor.
