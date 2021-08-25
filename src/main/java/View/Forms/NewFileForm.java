@@ -3,14 +3,11 @@ package View.Forms;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Window;
+
 import Controller.SystemController;
-import Model.FileType;
 import View.Tools.InputForm;
 import View.Tools.PopUpWindow;
 
@@ -93,7 +90,7 @@ public class NewFileForm extends InputForm{
      * are not.
      */
     public void submit(){
-        // CHECKING INPUT //
+        // VALIDATING //
 
         // filename cannot be null
         if(this.filename.getText().equals("")){
@@ -101,24 +98,30 @@ public class NewFileForm extends InputForm{
             this.noteLabel.setText(noNameNote);
         }
         
-        // CHECKS COMPLETE //
-        else{
-            // creating a new EditorTab through system controller
-            try{
-                // gathering list of file names
-                String[] filenames = this.filename.getText().split(NewFileForm.FILENAME_DELIM);
+        // VALIDATED //
 
-                // iterating through list of filenames
-                for(String filename : filenames){
+        else{
+            // gathering list of file names
+            String[] filenames = this.filename.getText().split(NewFileForm.FILENAME_DELIM);
+            
+            // recording if all files were created successfully
+            boolean success = true;
+
+            // iterating through list of filenames
+            for(String filename : filenames){
+                try{
                     // creating new program through system controller
                     SystemController.getInstance().createNewFile(filename);
                 }
-
-                // closing the form
-                this.close();
+                catch(Exception ex){
+                    success = false;
+                    PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+                }
             }
-            catch(Exception ex){
-                PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
+            
+            // closing the form if all files created successfully
+            if(success){
+                this.close();
             }
         }
     }

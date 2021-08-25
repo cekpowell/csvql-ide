@@ -73,22 +73,26 @@ CodeMirror.defineMode("sql", function(config, parserConfig) {
         return (state.tokenize = tokenLiteral(stream.next(), true))(stream, state);
       }
       return "keyword";
-    } else if (support.commentSlashSlash && ch == "/" && stream.eat("/")) {
-      // 1-line comment
-      stream.skipToEnd();
-      return "comment";
-    } else if ((support.commentHash && ch == "#")
+    } 
+    //else if (support.commentSlashSlash && ch == "/" && stream.eat("/")) {
+    // 1-line comment
+    //   stream.skipToEnd();
+    //   return "comment";
+    //}
+     else if ((support.commentHash && ch == "#")
         || (ch == "-" && stream.eat("-") && (!support.commentSpaceRequired || stream.eat(" ")))) {
       // 1-line comments
       // ref: https://kb.askmonty.org/en/comment-syntax/
       stream.skipToEnd();
       return "comment";
-    } else if (ch == "/" && stream.eat("*")) {
-      // multi-line comments
-      // ref: https://kb.askmonty.org/en/comment-syntax/
-      state.tokenize = tokenComment(1);
-      return state.tokenize(stream, state);
-    } else if (ch == ".") {
+    } 
+    // else if (ch == "/" && stream.eat("*")) {
+    //   // multi-line comments
+    //   // ref: https://kb.askmonty.org/en/comment-syntax/
+    //   state.tokenize = tokenComment(1);
+    //   return state.tokenize(stream, state);
+    //} 
+    else if (ch == ".") {
       // .1 for 0.1
       if (support.zerolessFloat && stream.match(/^(?:\d+(?:e[+-]?\d+)?)/i))
         return "number";

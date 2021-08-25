@@ -70,11 +70,19 @@ public class ProgramRunner {
             String programOutput = "";
 
 
-            // CSVQL PROGRAM //
+            // EXECUTING PROGRAM BASED ON TYPE //
 
-            if(programType == FileType.PROGRAM){
+            if(programType == FileType.PROGRAM_CSVQL){
                 // gathering output
                 programOutput = ProgramRunner.getCsvqlProgramOutput(tmpDir, programTab.getName());
+            }
+            else if(programType == FileType.PROGRAM_PYTHON){
+                // TODO
+                programOutput = "Not yet implemented.";
+            }
+            else if(programType == FileType.PROGRAM_JAVA){
+                // TODO
+                programOutput = "Not yet implemented.";
             }
 
             ///////////////////////
@@ -140,7 +148,7 @@ public class ProgramRunner {
 
         // string values of interpreter dir and executable
         String interpreterDir = "interpreter";
-        String interpreterExe = "csvql-no-color";
+        String interpreterExe = "csvql-no-colour";
 
         // COPYING INTERPRETER INTO TMP DIRECTORY //
 
@@ -219,7 +227,7 @@ public class ProgramRunner {
         try{
             for(File file : neededFiles) {
                 Files.copy(file.toPath(),                                                  // SOURCE FILE
-                           (new File(TMP_DIR + File.separator + file.getName())).toPath(), // TARGET DESTINATION
+                           (new File(TMP_DIR + File.separator + file.getName())).toPath(), // TARGET DESTINATION FILE
                            StandardCopyOption.REPLACE_EXISTING);                           // REPLACE PROTOCOL
             }
         }

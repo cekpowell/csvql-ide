@@ -138,12 +138,36 @@ public class Validator {
      * 
      * @param editorTab The EditorTab being renamed.
      * @param newFilename The new filename for the EditorTab.
-     * @throws Exception Thrown if the provided EditorTab cannot be renamed to the given filename.
+     * @throws Exception Thrown if the provided EditorTab cannot be renamed to the given filename
+     * because either the FileType is not supported, or the name is already in use.
      */
     public static void validateRenameFile(EditorTab editorTab, String newFilename) throws Exception{
-        // checking savefile name is valid
-        if(!Validator.renameFileNameIsValid(editorTab, newFilename)){
-            throw new Exception("This filename is already in use in the system!");
+        // var to hold errors
+        String errors = "";
+
+        // CHECKING INPUT //
+
+        // The filetype must be supported
+        boolean fileTypeCorrect = (FileType.getFileType(newFilename) != null);
+
+        // filename must be a valid name for renaming
+        boolean fileNameIsCorrect = Validator.renameFileNameIsValid(editorTab, newFilename);
+
+        // CHECKING RESULTS //
+
+        if(!fileTypeCorrect){
+            // adding error and skipping to next file
+            errors += "The file '" + newFilename + "' is not supported by the system.\n";
+        }
+        if(!fileNameIsCorrect){
+            // adding error and skipping to next file
+            errors += "The filename '" + newFilename + "' is already in use in the system.\n";
+        }
+
+        // THROWINNG EXCEPTION //
+
+        if(errors != ""){
+            throw new Exception(errors);
         }
     }
 
@@ -246,7 +270,7 @@ public class Validator {
         // Stored Tables
         for(StoredTable storedTable : SystemController.getInstance().getDashboard().getTableStore().getStoredTables()){
             // Type is Program
-            if(editortab.getFileType() == FileType.PROGRAM){
+            if(editortab.getFileType() == FileType.PROGRAM_CSVQL){
                 // program being saved cant have same name as any stored table
                 if(storedTable.getName().equals(newFilename)){
                     return false;

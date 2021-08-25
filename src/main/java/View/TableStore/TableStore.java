@@ -159,7 +159,7 @@ public class TableStore extends VBox{
         // Files Dropped in TableStore
         this.setOnDragDropped((e) -> {
             Dragboard db = e.getDragboard();
-            boolean success = false;
+            boolean success = true;
 
             // checking if file(s) were dropped
             if (db.hasFiles()) {
@@ -168,12 +168,9 @@ public class TableStore extends VBox{
                     try{
                         // loading file through system controller
                         SystemController.getInstance().loadFileIntoTableStore(selectedFile);
-
-                        // updating success status
-                        success = true;
                     }
                     catch(Exception ex){
-                        // handling errors
+                        success = false;
                         PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
                     }
                 }

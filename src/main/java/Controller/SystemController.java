@@ -1,16 +1,12 @@
 package Controller;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-
 
 import Model.FileType;
 import View.App.Dashboard;
 import View.App.DashboardToolbar;
 import View.Editor.EditorTab;
+import View.Editor.EditorTabContainer;
 import View.Editor.ProgramTab;
 import View.Editor.TableTab;
 import View.TableStore.StoredTable;
@@ -96,26 +92,23 @@ public class SystemController {
         // gathering file type
         FileType fileType = FileType.getFileType(filename);
 
-        // handling loading of file based on it's filetype
-        switch(fileType){
-            case PROGRAM:
-                // creating new program tab
-                ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null);
+        // LOADING FILE //
 
-                // adding program tab to editor
-                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
+        // File is Table
+        if(fileType == FileType.TABLE){
+            // creating new TableTab
+            TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null, null);
 
-                break;
-            case TABLE:
-                // creating new TableTab
-                TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null, null);
+            // adding table tab to editor
+            this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
+        }
+        // File is Program
+        else{
+            // creating new program tab
+            ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), filename, null, fileType);
 
-                // adding table tab to editor
-                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
-
-                break;
-            case TERMINAL:
-                break;
+            // adding program tab to editor
+            this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
         }
     }
 
@@ -139,31 +132,26 @@ public class SystemController {
         // gathering file type
         FileType fileType = FileType.getFileType(file);
 
-        // handling loading of file based on it's filetype
-        switch(fileType){
-            case PROGRAM:
-                // creating new program tab
-                ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), file);
+        // LOADING FILE //
 
-                // adding program tab to editor
-                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
+        // File is Table
+        if(fileType == FileType.TABLE){
+            // creating and storing new stored table
+            StoredTable storedTable = this.createAndStoreNewStoredTable(file);
 
-                break;
-                
-            case TABLE:
-                // creating and storing new stored table
-                StoredTable storedTable = this.createAndStoreNewStoredTable(file);
+            // creating new TableTab with the file and StoredTable
+            TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), file.getName(), file, storedTable);
 
-                // creating new TableTab with the file and StoredTable
-                TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), file, storedTable);
+            // adding program tab to editor
+            this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
+        }
+        // File is Program
+        else{
+            // creating new program tab
+            ProgramTab programTab = new ProgramTab(this.dashboard.getEditor().getEditorTabContainer(), file.getName(), file, fileType);
 
-                // adding program tab to editor
-                this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
-
-                break;
-
-            case TERMINAL:
-                break;
+            // adding program tab to editor
+            this.dashboard.getEditor().getEditorTabContainer().addEditorTab(programTab);
         }
     }
 
@@ -217,7 +205,7 @@ public class SystemController {
         // VALIDATED //
 
         // creating new TableTab
-        TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), storedTable.getFile(), storedTable);
+        TableTab tableTab = new TableTab(this.dashboard.getEditor().getEditorTabContainer(), storedTable.getFile().getName(), storedTable.getFile(), storedTable);
 
         // adding TableTab to editor
         this.dashboard.getEditor().getEditorTabContainer().addEditorTab(tableTab);
@@ -230,7 +218,6 @@ public class SystemController {
      * @param storedTable The StoredTable being removed from the Editor.
      */
     public void removeStoredTableFromEditor(StoredTable storedTable){
-
         // var to store the EditorTab of the StoredTable
         EditorTab matchedEditorTab = null;
 
@@ -267,41 +254,35 @@ public class SystemController {
      * 
      * @param editorTab The EditorTab being saved.
      */
-    public void saveEditorTabAs(EditorTab editorTab) throws Exception{
-        // getting the file to save the program to
-        File chosenFile = FileManager.getNewSaveFile(this.dashboard.getScene().getWindow(), editorTab.getName(), editorTab.getFileType().getExtensionFilters());
+    public void saveEditorTabAs(EditorTab editorTab, File file) throws Exception{
+        // VALIDATING //
 
-        // making sure file was selected
-        if(chosenFile != null){
-            // VALIDATING //
+        Validator.validateRenameFile(editorTab, file.getName());
 
-            Validator.validateRenameFile(editorTab, chosenFile.getName());
+        // VALIDATED //
 
-            // VALIDATED //
+        // gathering content to be saved
+        String content = editorTab.getCodeArea().getCode();
 
-            // gathering content to be saved
-            String content = editorTab.getCodeArea().getCode();
+        // saving content to file
+        FileManager.writeContentToFile(file, content);
 
-            // saving content to file
-            FileManager.writeContentToFile(chosenFile, content);
+        // attaching the chosen file
+        editorTab.setFile(file);
 
-            // attaching the chosen file
-            editorTab.setFile(chosenFile);
+        // updating tab information
+        editorTab.updateAfterSave();
 
-            // updating tab information
-            editorTab.updateAfterSave();
+        // HANDLING TABLE TAB CASE //
+        if(editorTab.getFileType() == FileType.TABLE){
+            // casting to table tab
+            TableTab tableTab = (TableTab) editorTab;
 
-            // HANDLING TABLE TAB CASE //
-            if(editorTab.getFileType() == FileType.TABLE){
-                // casting to table tab
-                TableTab tableTab = (TableTab) editorTab;
+            // creating and storing new stored table
+            StoredTable storedTable = this.createAndStoreNewStoredTable(file);
 
-                // creating and storing new stored table
-                StoredTable storedTable = this.createAndStoreNewStoredTable(chosenFile);
-
-                // adding stored table into the table tab
-                tableTab.setStoredTable(storedTable);
-            }
+            // adding stored table into the table tab
+            tableTab.setStoredTable(storedTable);
         }
     }
 
@@ -326,10 +307,18 @@ public class SystemController {
             editorTab.updateAfterSave();
         }
 
-        // EditorFile Has No File //
+        // EditorFile Has No File (open dialog and let the user select one) //
         else{
-            // running save as protocol
-            this.saveEditorTabAs(editorTab);
+            // getting the file to save the program to
+            File chosenFile = FileManager.getNewSaveFile(this.dashboard.getScene().getWindow(), 
+                                                         editorTab.getName(), 
+                                                         editorTab.getFileType().getExtensionFilters());
+
+            // making sure file was selected
+            if(chosenFile != null){
+                // saving file through system controller
+                SystemController.getInstance().saveEditorTabAs(editorTab, chosenFile); 
+            }
         }
     }
 
@@ -338,53 +327,133 @@ public class SystemController {
     /////////////////////////
 
     /**
-     * Attempts to change the name of the provided EditorTab to the
-     * provided new name.
+     * Attempts to change the name of the EditorTab to the provided new name.
      * 
-     * @param editorTab The EditorTab beign renamed.
-     * @param newFilename The new name for the editor tab.
-     * @throws Exception If the EditorTab could not be renanmed (e.g., the name
-     * is already in use).
+     * The renaming process works by creating a new EditorTab instance with the new 
+     * filename, File object, graphic and code template and placing the old EditorTab's 
+     * content (e.g., code and savestate) inside of thjis
+     * 
+     * The renaming process works by placing the old EditorTab instance's content, and
+     * save state into a new EditorTab instance that has the new name, updated code
+     * mirror template and updated graphic.
+     * 
+     * Renaming will fail if there exists already a file within the system with the same
+     * name as the proposed new name.
+     * 
+     * @param editorTab The EditorTab being renamed.
+     * @param newFilename The new name of the EditorTab being renamed.
+     * @throws Exception Thrown if the filename could not be renamed because either the
+     * new FileType is not supported, or the filename is already in use within the system.
      */
     public void renameEditorTab(EditorTab editorTab, String newFilename) throws Exception{
+        //TODO make it work with multiple program types
         // VALIDATING //
 
         Validator.validateRenameFile(editorTab, newFilename);
 
         // VALIDATED //
 
-        // EditorTab has Associated File 
+        ///////////////////////////////////////////////////////
+        // RECOVERING NEEDED INFORMATION FROM OLD EDITOR TAB //
+        ///////////////////////////////////////////////////////
+
+        String code = editorTab.getCodeArea().getCode();
+        String textAtLastSave = editorTab.getTextAtLastSave();
+        boolean unsavedChanges = editorTab.hasUnsavedChanges();
+
+        ///////////////////////////////////////////////////
+        // CREATING THE PROPERTIES OF THE NEW EDITOR TAB //
+        ///////////////////////////////////////////////////
+
+        EditorTabContainer editorTabContainer = this.dashboard.getEditor().getEditorTabContainer();
+        String newName = newFilename;
+        File newFile = null;
         if(editorTab.getFile() != null){
-            // renaming associated File object
-            Path source = Paths.get(editorTab.getFile().getAbsolutePath());
-            Path target = Files.move(source, source.resolveSibling(newFilename));
-
             // gathering new file object
-            File newFile = target.toFile();
+            newFile = FileManager.renameFile(editorTab.getFile(), newName);
+        }
+        FileType newFileType = FileType.getFileType(newFilename);
 
-            // updating EditorTab information
-            editorTab.setFile(newFile);
+        //////////////////////////////////
+        // INSTANTIATING NEW EDITOR TAB //
+        //////////////////////////////////
 
-            // HANDLING TABLE TAB CASE //
+        // new instance
+        EditorTab newEditorTab = null;
+
+        // insantiating based on the new FileType
+
+        // NEW TYPE IS TABLE //
+        if(newFileType == FileType.TABLE){
+            // setting up new StoredTable instance
+            StoredTable storedTable = null;
+
+            // dealing with StoredTable when old EditorTab was Table as well
             if(editorTab.getFileType() == FileType.TABLE){
-                // casting to table tab
+                // casting old tab to TableTab (to get StoredTable instance)
                 TableTab tableTab = (TableTab) editorTab;
 
-                /**
-                 * Renaming the TableTab's StoredTable if it exists.
-                 * (which it should due to the if statements - if the 
-                 * EditorTab has a file, then the TableTab must have a
-                 * StoredTable).
-                 */
+                // gathering old stored table and updating the file it points to
                 if(tableTab.getStoredTable() != null){
-                    tableTab.getStoredTable().setFile(newFile);
+                    // gathering stored table instance
+                    storedTable = tableTab.getStoredTable();
+    
+                    // updating StoredTable file
+                    storedTable.setFile(newFile);
                 }
             }
+
+            // initializing new EditorTab as TableTab
+            newEditorTab = new TableTab(editorTabContainer,
+                                        newName,
+                                        newFile,
+                                        storedTable);
         }
-        // EditorTab has no file - just need to update it's display information
+        // NEW TYPE IS PROGRAM //
         else{
-            // updating tab information
-            editorTab.setName(newFilename);
+            // initializing new EditorTab as ProgramTab
+            newEditorTab = new ProgramTab(editorTabContainer,
+                                          newName,
+                                          newFile,
+                                          newFileType); /** Instantiate with the filetype (as there are multiple program FileTypes) */
+        }
+
+        /////////////////////////////////////////////////
+        // CONFIGURING NEW EDITOR TAB WITH OLD CONTENT //
+        /////////////////////////////////////////////////
+
+        // confuguring new editor tab
+        newEditorTab.getCodeArea().setCode(code);
+        newEditorTab.setTextAtLastSave(textAtLastSave);
+        newEditorTab.setUnsavedChanges(unsavedChanges);
+
+        ///////////////////////////////////////
+        // PLACING NEW EDITORTAB INTO EDITOR // 
+        ///////////////////////////////////////
+
+        // replacing old editor tab with new one
+        this.dashboard.getEditor().getEditorTabContainer().replaceEditorTab(editorTab, newEditorTab);
+
+        ////////////////////////////////////////////////////////////////
+        // HANDLING CASE WHERE OLD TYPE WAS TABLE BUT NEW TYPE IS NOT //
+        ////////////////////////////////////////////////////////////////
+
+        /**
+         * If old EditorTab was TableTab, but new one isnt, need to remove the
+         * StoredTable associated with the TableTab (if it exists).
+         */
+
+        if(editorTab.getFileType() == FileType.TABLE && newFileType != FileType.TABLE){
+            TableTab tableTab = (TableTab) editorTab;
+            StoredTable storedTable = null;
+
+            if(tableTab.getStoredTable() != null){
+                // getting the old stored table
+                storedTable = tableTab.getStoredTable();
+
+                // removing old stored table from dashboard
+                this.dashboard.getTableStore().removeStoredTable(storedTable);
+            }
         }
     }
 

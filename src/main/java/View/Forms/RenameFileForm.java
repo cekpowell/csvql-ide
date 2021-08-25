@@ -23,9 +23,7 @@ public class RenameFileForm extends InputForm{
     private static final int height = 215;
     private static final String confirmText = "Confirm";
     private static final String cancelText = "Cancel";
-    private static final String initialNote = "Note: Do not include the file extension in the name!";
     private static final String noNameNote = "Error: You must provide a filename!";
-    private static final String fileExtNote = "Error: You must not use a file extension!";
     
     // member variables
     private EditorTab editorTab;
@@ -46,7 +44,7 @@ public class RenameFileForm extends InputForm{
         super(title, width, height, confirmText, cancelText, false);
         this.editorTab = editorTab;
         this.filename = new TextField();
-        this.noteLabel = new Label(initialNote);
+        this.noteLabel = new Label();
         
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
@@ -96,28 +94,27 @@ public class RenameFileForm extends InputForm{
      * are not.
      */
     public void submit(){
+        // VALIDATING INPUT //
+
         // filename cannot be null
         if(this.filename.getText().equals("")){
             // creating error label
             this.noteLabel.setText(noNameNote);
         }
-        // filename cannot have an extension
-        else if (this.filename.getText().contains(".")){
-            // creating error label
-            this.noteLabel.setText(fileExtNote);
-        }
-        // checks passed
+
+        // VALIDATED //
+        
         else{
             try{
                 // EditorTab is Program
-                if(this.editorTab.getFileType() == FileType.PROGRAM){
+                if(this.editorTab.getFileType() == FileType.PROGRAM_CSVQL){
                     // renaming the new EditorTab through system controller
-                    SystemController.getInstance().renameEditorTab(editorTab, this.filename.getText() + FileType.PROGRAM.getDefaultExtension());
+                    SystemController.getInstance().renameEditorTab(editorTab, this.filename.getText());
                 }
                 // EditorTag is Table
                 else{
                     // renaming the new EditorTab through system controller
-                    SystemController.getInstance().renameEditorTab(editorTab, this.filename.getText() + FileType.TABLE.getDefaultExtension());
+                    SystemController.getInstance().renameEditorTab(editorTab, this.filename.getText());
                 }
 
                 // closing the form

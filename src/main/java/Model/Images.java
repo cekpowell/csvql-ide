@@ -7,7 +7,13 @@ import javafx.scene.image.Image;
  */
 public class Images {
 
-    // types 
+    // FILE TYPES //
+    public static final Image CSVQL = new Image("img/csvql.png");
+    public static final Image CSVQL_UNSAVED = new Image("img/csvql-unsaved.png"); 
+    public static final Image PYTHON = new Image("img/python.png");
+    public static final Image PYTHON_UNNSAVED = new Image("img/python-unsaved.png"); 
+    public static final Image JAVA = new Image("img/java.png");
+    public static final Image JAVA_UNSAVED = new Image("img/java-unsaved.png"); 
     
     // FILE //
     public static final Image FILE = new Image("img/file.png");
@@ -16,8 +22,6 @@ public class Images {
 
     // EDITOR //
     public static final Image EDITOR = new Image("img/editor.png");
-    public static final Image PROGRAM = new Image("img/program.png");
-    public static final Image PROGRAM_UNSAVED = new Image("img/program-unsaved.png");
     public static final Image TABLE = new Image("img/table.png");
     public static final Image TABLE_UNSAVED = new Image("img/table-unsaved.png");
 

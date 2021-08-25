@@ -36,7 +36,7 @@ public abstract class EditorTab extends Tab{
     //////////////////
 
     public EditorTab(EditorTabContainer editorTabContainer, String name, File file, FileType fileType){
-        // initializinig
+        // initializing
         this.editorTabContainer = editorTabContainer;
         this.name = name;
         this.file = file;
@@ -91,92 +91,6 @@ public abstract class EditorTab extends Tab{
         this.setContent(container);
     }
 
-    /**
-     * Class constuctor. Initializes a new editor tab without an associated file.
-     * 
-     * @param editorTabContainer The container associated with this editor tab.
-     * @param name The name of the file in the editor tab.
-     * @param fileType The FileType associated with this EditorTab
-     */
-    public EditorTab(EditorTabContainer editorTabContainer, String name, FileType fileType){
-        // initializng 
-        this.name = name; 
-        this.file = null;
-        this.init(editorTabContainer, fileType);
-    }
-
-    /**
-     * Class constructor. Initializes a new editor tab with an associated file.
-     * 
-     * @param editorTabContainer The container associated with this editor tab.
-     * @param file The File associated with the editor tab.
-     * @param fileType The FileType associated with this EditorTab
-     */
-    public EditorTab(EditorTabContainer editorTabContainer,File file, FileType fileType){
-        // initializing
-        this.name = file.getName();
-        this.file = file;
-        this.init(editorTabContainer, fileType);
-
-        // Configuring Member Variables //
-
-        /**
-         * Editor tab set-up with file - need to load file content into the editor.
-         */
-        try{
-            // getting content from the file
-            String content = FileManager.getContentFromFile(this.file);
-            
-            // setting the content into the code area
-            this.codeArea.setCode(content);
-
-            // configuring the text at the last save
-            this.textAtLastSave = content;
-        }
-        // handling error
-        catch(Exception e){
-            // displaying error window
-            PopUpWindow.showErrorWindow(this.editorTabContainer.getScene().getWindow(), e);
-        }
-    }
-
-    /**
-     * Initializer method - used because of multiple constructors.
-     * 
-     * @param editorTabContainer The container associated with this editor tab.
-     * @param ExtensionFilter The extension filter for this type of file when being saved.
-     * @param fileType The FileType associated with this EditorTab
-     */
-    private void init(EditorTabContainer editorTabContainer, FileType fileType){
-        // initializing
-        this.editorTabContainer = editorTabContainer;
-        this.fileType = fileType;
-        this.toolbar = new EditorTabToolbar(this);
-        this.codeArea = new CodeArea(this.fileType.getCodeMirrorTemplate(), "");
-        this.textAtLastSave = "";
-        if(this.file == null) {this.unsavedChanges = true;} else {this.unsavedChanges = false;}
-
-        ///////////////////////////
-        // CONTAINERS AND EXTRAS //
-        ///////////////////////////
-
-        BorderPane container = new BorderPane();
-        container.setTop(this.toolbar);
-        container.setCenter(this.codeArea);
-        
-        /////////////////
-        // CONFIGURING //
-        /////////////////
-
-        // event handling
-        this.configureEvents();
-
-        // updating tab title
-        this.updateTabTitleContent();
-
-        // content
-        this.setContent(container);
-    }
 
     /**
      * Defines the event handling for the events that can occur 
@@ -214,8 +128,27 @@ public abstract class EditorTab extends Tab{
 
         // KeyBoard Shortcuts
         this.codeArea.setOnKeyPressed((e) -> {
+            // SAVE AS - CTRL + SHIFT + S
+            if(KeyCodes.CTRL_SHIFT_S.match(e)){
+                try {
+                    // getting the file to save the program to
+                    File chosenFile = FileManager.getNewSaveFile(this.getEditorTabToolbar().getScene().getWindow(), 
+                                                                 this.name, 
+                                                                 this.fileType.getExtensionFilters());
+
+                    // making sure file was selected
+                    if(chosenFile != null){
+                        // saving file through system controller
+                        SystemController.getInstance().saveEditorTabAs(this, chosenFile); 
+                    }
+                }
+                catch (Exception ex) {
+                    // showing error alert
+                    PopUpWindow.showErrorWindow(this.getEditorTabToolbar().getScene().getWindow(), ex);
+                }
+            }
             // SAVE - CTRL + S
-            if(KeyCodes.CTRL_S.match(e)){
+            else if(KeyCodes.CTRL_S.match(e)){
                 try {
                     // saving file through system controller
                     SystemController.getInstance().saveEditorTab(this);
@@ -375,5 +308,10 @@ public abstract class EditorTab extends Tab{
 
     public void setUnsavedChanges(boolean unsavedChanges){
         this.unsavedChanges = unsavedChanges;
+
+        /**
+         * Need to update title if save state has changed.
+         */
+        this.updateTabTitleContent();
     }
 }

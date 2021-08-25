@@ -42,7 +42,7 @@ public class Terminal extends BorderPane{
         // initializing
         this.dashboard = dashboard;
         this.terminalToolbar = new TerminalToolbar(this);
-        this.codeArea = new CodeArea(FileType.TERMINAL.getCodeMirrorTemplate(), "");
+        this.codeArea = new CodeArea(FileType.TABLE.getCodeMirrorTemplate(), "");
 
         ///////////////////////////
         // CONTAINERS AND EXTRAS //
@@ -206,7 +206,7 @@ public class Terminal extends BorderPane{
      */
     public void save(){
         try{
-            FileManager.writeContentToNewFile(this.codeArea.getCode(), this.getScene().getWindow(), Terminal.initialFileName, FileType.TERMINAL.getExtensionFilters());
+            FileManager.writeContentToNewFile(this.codeArea.getCode(), this.getScene().getWindow(), Terminal.initialFileName, FileType.TABLE.getExtensionFilters());
         }
         catch(Exception e){
             PopUpWindow.showErrorWindow(this.getScene().getWindow(), e);

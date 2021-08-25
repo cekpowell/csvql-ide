@@ -8,6 +8,9 @@ import javafx.scene.input.KeyCombination;
  * Defines static KeyCombination instances to be used by other system components.
  */
 public class KeyCodes {
+
+    // SAVE AS
+    public static final KeyCombination CTRL_SHIFT_S = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN, KeyCodeCombination.SHIFT_ANY);
     
     // SAVE
     public static final KeyCombination CTRL_S = new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN);
@@ -18,7 +21,7 @@ public class KeyCodes {
     // UNDO
     public static final KeyCombination CTRL_Z = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
 
-    //REDO
+    // REDO
     public static final KeyCombination CTRL_SHIFT_Z = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_ANY, KeyCombination.SHORTCUT_DOWN);
     
     // ZOOM-IN

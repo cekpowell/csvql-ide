@@ -1,14 +1,8 @@
 package View.Editor;
 
-import java.io.File;
 import java.util.ArrayList;
 
-import Controller.SystemController;
-import Model.FileType;
-import View.Tools.PopUpWindow;
 import javafx.scene.control.*;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 
 /**
  * View to contain all the programs being edited within the editor.
@@ -78,6 +72,32 @@ public class EditorTabContainer extends TabPane{
         // updating the contents of the editor view (display no tabs screen if this is last tab)
         this.editor.updateContents();
     }
+
+    /**
+     * Replaces the old EditorTab with the new EditorTab.
+     * 
+     * @param oldDditorTab The EditorTab currently in the container.
+     * @param newEditorTab The new EditorTab to be placed into the container.
+     */
+    public void replaceEditorTab(EditorTab oldEditorTab, EditorTab newEditorTab){
+        // replacing in list
+        int index = this.editorTabs.indexOf(oldEditorTab);
+        this.editorTabs.set(index, newEditorTab);
+
+        // replacing in tab pane
+        index = this.getTabs().indexOf(oldEditorTab);
+        this.getTabs().set(index, newEditorTab);
+
+        // removing old editor tab
+        this.removeEditorTab(oldEditorTab);
+
+        // selecting new editor tab (because it was previously selected)
+        this.getSelectionModel().select(newEditorTab);
+    }
+
+    ////////////////////
+    // HELPER METHODS //
+    ////////////////////
 
     /**
      * Determines if any of the files present in container have usaved changes.

@@ -1,5 +1,8 @@
 package View.Editor;
 
+import java.io.File;
+import java.util.List;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,10 +13,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import Controller.SystemController;
 import Model.FileType;
@@ -106,8 +105,7 @@ public class Editor extends BorderPane{
             // configuring the file chooser to load a new file into the system
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open File");
-            fileChooser.getExtensionFilters().addAll(FileType.PROGRAM.getExtensionFilters());
-            fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
+            fileChooser.getExtensionFilters().addAll(FileType.getAllExtensionFilters());
 
             // showing the open dialog
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
@@ -118,7 +116,7 @@ public class Editor extends BorderPane{
                 for(File selectedFile : selectedFiles){
                     try{
                         // loading file through system controller
-                        SystemController.getInstance().loadFile(selectedFile, FileType.PROGRAM, FileType.TABLE);
+                        SystemController.getInstance().loadFile(selectedFile, FileType.values());
                     }
                     catch(Exception ex){
                         // handling errors
@@ -142,7 +140,7 @@ public class Editor extends BorderPane{
         // Files Dropped in Editor
         this.setOnDragDropped((e) -> {
             Dragboard db = e.getDragboard();
-            boolean success = false;
+            boolean success = true;
 
             // checking if file(s) were dropped
             if (db.hasFiles()) {
@@ -150,17 +148,15 @@ public class Editor extends BorderPane{
                 for(File selectedFile : db.getFiles()){
                     try{
                         // loading file through system controller
-                        SystemController.getInstance().loadFile(selectedFile, FileType.PROGRAM, FileType.TABLE);
-
-                        // updating success status
-                        success = true;
+                        SystemController.getInstance().loadFile(selectedFile, FileType.values());
                     }
                     catch(Exception ex){
-                        // handling errors
+                        success = false;
                         PopUpWindow.showErrorWindow(this.getScene().getWindow(), ex);
                     }
                 }
             }
+
             /* let the source know whether the file was successfully 
             * transferred and used */
             e.setDropCompleted(success);

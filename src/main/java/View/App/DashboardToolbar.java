@@ -7,7 +7,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import Controller.SystemController;
@@ -75,8 +74,7 @@ public class DashboardToolbar extends MenuBar {
             // configuring the file chooser to load a new file into the system
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Open File");
-            fileChooser.getExtensionFilters().addAll(FileType.PROGRAM.getExtensionFilters());
-            fileChooser.getExtensionFilters().addAll(FileType.TABLE.getExtensionFilters());
+            fileChooser.getExtensionFilters().addAll(FileType.getAllExtensionFilters());
 
             // showing the open dialog
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(this.getScene().getWindow());
@@ -87,7 +85,7 @@ public class DashboardToolbar extends MenuBar {
                 for(File selectedFile : selectedFiles){
                     try{
                         // loading file through system controller
-                        SystemController.getInstance().loadFile(selectedFile, FileType.PROGRAM, FileType.TABLE);
+                        SystemController.getInstance().loadFile(selectedFile, FileType.values());
                     }
                     catch(Exception ex){
                         // handling errors

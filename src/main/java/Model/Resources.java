@@ -1,7 +1,5 @@
 package Model;
 
-import java.io.File;
-
 /**
  * Defines property that contains the path to the system resources.
  */

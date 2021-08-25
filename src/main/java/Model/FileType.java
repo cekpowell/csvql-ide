@@ -4,9 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import Controller.FileManager;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser.ExtensionFilter;
+
+import Controller.FileManager;
 
 /**
  * Enumeration class for the type of Client object that can exist within the 
@@ -16,7 +17,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
  */
 public enum FileType { 
     // types
-    PROGRAM(
+    PROGRAM_CSVQL(
             // DEFAULT EXTENSION
             ".cql",
             // ALL EXTENSIONS
@@ -53,9 +54,87 @@ public enum FileType {
             "</body>" +
             "</html>",
             // GRAPHIC
-            new Image("img/program.png"),
+            new Image("img/csvql.png"),
             // GRAPHIC UNSAVED
-            new Image("img/program-unsaved.png")), 
+            new Image("img/csvql-unsaved.png")), 
+    PROGRAM_PYTHON(
+            // DEFAULT EXTENSION
+            ".py",
+            // ALL EXTENSIONS
+            new ArrayList<String>(Arrays.asList(".py")),
+            // EXTENSION FILTERS
+            new ExtensionFilter[] {new ExtensionFilter("Python Program (*.py)", "*.py")},
+            // CODE MIRROR TEMPLATE
+            "<!doctype html>" +                                                      
+            "<html>" +
+            "<head>" +
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/lib/codemirror.js\"></script>" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "lib/codemirror.css\">" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "theme/3024-day.css\">" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "hint/show-hint.css\">" + 
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/hint/show-hint.js\"></script>" + 
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/mode/python/python.js\"></script>" + 
+            "</head>" +
+            "<body style='margin: 0', bgcolor=#ffffff>" +
+            "<form><textarea id=\"code\" name=\"code\">\n" +
+            "${code}" +
+            "</textarea></form>" +
+            "<script>" +
+            "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
+            "    mode: \"python\"," + 
+            "    lineNumbers: true," +
+            "    spellcheck: true," +
+            "    styleActiveLine: {nonEmpty: true}," +
+            "    styleActiveSelected: true," + 
+            "    theme: \"3024-day\"," + 
+            "    extraKeys: {\"Ctrl-Space\": \"autocomplete\"}" + 
+            "  });" +
+            "</script>" +
+            "</body>" +
+            "</html>",
+            // GRAPHIC
+            new Image("img/python.png"),
+            // GRAPHIC UNSAVED
+            new Image("img/python-unsaved.png")), 
+    PROGRAM_JAVA(
+            // DEFAULT EXTENSION
+            ".java",
+            // ALL EXTENSIONS
+            new ArrayList<String>(Arrays.asList(".java")),
+            // EXTENSION FILTERS
+            new ExtensionFilter[] {new ExtensionFilter("Java Program (*.java", "*.java")},
+            // CODE MIRROR TEMPLATE
+            "<!doctype html>" +                                                      
+            "<html>" +
+            "<head>" +
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/lib/codemirror.js\"></script>" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "lib/codemirror.css\">" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "theme/3024-day.css\">" + 
+            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "hint/show-hint.css\">" + 
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/hint/show-hint.js\"></script>" + 
+            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/mode/c-like/clike.js\"></script>" + 
+            "</head>" +
+            "<body style='margin: 0', bgcolor=#ffffff>" +
+            "<form><textarea id=\"code\" name=\"code\">\n" +
+            "${code}" +
+            "</textarea></form>" +
+            "<script>" +
+            "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
+            "    mode: \"text/x-java\"," + 
+            "    lineNumbers: true," +
+            "    spellcheck: true," +
+            "    styleActiveLine: {nonEmpty: true}," +
+            "    styleActiveSelected: true," + 
+            "    theme: \"3024-day\"," + 
+            "    extraKeys: {\"Ctrl-Space\": \"autocomplete\"}" + 
+            "  });" +
+            "</script>" +
+            "</body>" +
+            "</html>",
+            // GRAPHIC
+            new Image("img/java.png"),
+            // GRAPHIC UNSAVED
+            new Image("img/java-unsaved.png")), 
     TABLE(
             // DEFAULT EXTENSION
             ".csv",
@@ -79,7 +158,7 @@ public enum FileType {
             "</textarea></form>" +
             "<script>" +
             "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
-            "    mode: \"\"," + // no syntax for tables
+            "    mode: \"\"," + // no language for tables - just plaintext
             "    lineNumbers: true," +
             "    styleActiveLine: true," +
             "    styleActiveSelected: true," + 
@@ -91,43 +170,7 @@ public enum FileType {
             // GRAPHIC
             new Image("img/table.png"),
             // GRAPHIC UNSAVED
-            new Image("img/table-unsaved.png")),
-    TERMINAL(
-            // DEFAULT EXTENSION
-            ".csv",
-            // ALL EXTENSIONS
-            new ArrayList<String>(Arrays.asList(".csv", ".txt")),
-            // EXTENSION FILTERS
-            new ExtensionFilter[] {new ExtensionFilter("CSV Table (*.csv)", "*.csv"),
-                                   new ExtensionFilter("TSV Table (*.tsv)", "*.tsv"),
-                                   new ExtensionFilter("Text Table (*.txt)", "*.txt")},
-            // CODE MIRROR TEMPLATE
-            "<!doctype html>" +                                          
-            "<html>" +
-            "<head>" +
-            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/lib/codemirror.js\"></script>" + 
-            "   <link rel=\"stylesheet\" href=\"" + Resources.CODE_MIRROR_PATH + "lib/codemirror.css\">" + 
-            "   <script src=\"" + Resources.CODE_MIRROR_PATH + "/mode/mathematica/mathematica.js\"></script>" + 
-            "</head>" +
-            "<body style='margin: 0', bgcolor=#ffffff>" +
-            "<form><textarea id=\"code\" name=\"code\">\n" +
-            "${code}" +
-            "</textarea></form>" +
-            "<script>" +
-            "  var editor = CodeMirror.fromTextArea(document.getElementById(\"code\"), {" +
-            "    mode: \"\"," + // no syntax for tables
-            "    lineNumbers: true," +
-            "    styleActiveLine: true," +
-            "    styleActiveSelected: true," + 
-            "    theme: \"3024-day\"" + 
-            "  });" +
-            "</script>" +
-            "</body>" +
-            "</html>",
-            // GRAPHIC (null as not required for terminal)
-            null,  
-            // GRAPHIC UNSAVED (null as not required for terminal)
-            null);  
+            new Image("img/table-unsaved.png"));
 
     // member variables
     private String defaultExtension;
@@ -179,17 +222,21 @@ public enum FileType {
      * @return The FileType associated with the given filename.
      */
     public static FileType getFileType(String filename){
-        // PROGRAM
-        if(FileType.PROGRAM.fileHasSameFileType(filename)){
-            return FileType.PROGRAM;
+        // CSVQL PROGRAM
+        if(FileType.PROGRAM_CSVQL.fileHasSameFileType(filename)){
+            return FileType.PROGRAM_CSVQL;
+        }
+        // PYTHON PROGRAM
+        else if(FileType.PROGRAM_PYTHON.fileHasSameFileType(filename)){
+            return FileType.PROGRAM_PYTHON;
+        }
+        // JAVA PROGRAM
+        else if(FileType.PROGRAM_JAVA.fileHasSameFileType(filename)){
+            return FileType.PROGRAM_JAVA;
         }
         // TABLE
-        if(FileType.TABLE.fileHasSameFileType(filename)){
+        else if(FileType.TABLE.fileHasSameFileType(filename)){
             return FileType.TABLE;
-        }
-        // TERMINAL
-        if(FileType.TERMINAL.fileHasSameFileType(filename)){
-            return FileType.TERMINAL;
         }
         // NO MATCHING FILETYPE
         else{
@@ -268,6 +315,18 @@ public enum FileType {
 
     public ExtensionFilter[] getExtensionFilters(){
         return this.extensionFilters;
+    }
+
+    public static ArrayList<ExtensionFilter> getAllExtensionFilters(){
+        ArrayList<ExtensionFilter> extensionFilters = new ArrayList<ExtensionFilter>();
+
+        for(FileType fileType : FileType.values()){
+            for(ExtensionFilter extensionFilter : fileType.getExtensionFilters()){
+                extensionFilters.add(extensionFilter);
+            }
+        }
+
+        return extensionFilters;
     }
 
     public String getCodeMirrorTemplate(){

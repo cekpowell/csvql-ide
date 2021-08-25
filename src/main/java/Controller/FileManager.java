@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javafx.scene.input.Clipboard;
@@ -36,24 +39,30 @@ public class FileManager {
      * read.
      */
     public static String getContentFromFile(File file) throws Exception{
-        // setting up file reader 
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        try{
+            // setting up file reader 
+            BufferedReader reader = new BufferedReader(new FileReader(file));
 
-        // iterating through the file
-        ArrayList<String> content = new ArrayList<String>();
-        while(reader.ready()){
-            // getting next line
-            String line = reader.readLine();
+            // iterating through the file
+            ArrayList<String> content = new ArrayList<String>();
+            while(reader.ready()){
+                // getting next line
+                String line = reader.readLine();
 
-            // buildiing the content
-            content.add(line);
+                // buildiing the content
+                content.add(line);
+            }
+
+            // closiing the reader
+            reader.close();
+
+            // returning the content seperated into lines
+            return String.join("\n", content);
         }
-
-        // closiing the reader
-        reader.close();
-
-        // returning the content seperated into lines
-        return String.join("\n", content);
+        catch(Exception e){
+            throw new Exception("Unable to read content from file '" + file.getName() + "'.\n" + 
+                                "Cause : \n\t" + e.toString());
+        }
     }
 
     //////////////////////////
@@ -69,10 +78,16 @@ public class FileManager {
      * @throws Exception Thrown if the content could not be written into the file.
      */
     public static void writeContentToFile(File file, String content) throws Exception{
-        // writing save content to file
-        OutputStream out = new FileOutputStream(file);
-        out.write(content.getBytes());
-        out.close();
+        try{
+            // writing save content to file
+            OutputStream out = new FileOutputStream(file);
+            out.write(content.getBytes());
+            out.close();
+        }
+        catch(Exception e){
+            throw new Exception("Unable to write content to file '" + file.getName() + "'.\n" + 
+                                "Cause : \n\t" + e.toString());
+        }
     }
 
     /**
@@ -87,14 +102,20 @@ public class FileManager {
      */
     public static void writeContentToNewFile(String content, Window window, String initialFileName, ExtensionFilter[] extensionFilters) throws Exception{
         // gathering file
-        File file = FileManager.getNewSaveFile(window, initialFileName, extensionFilters);
+        File chosenFile = FileManager.getNewSaveFile(window, initialFileName, extensionFilters);
 
         // making sure file was selected
-        if(file != null){
-            // writing save content to file
-            OutputStream out = new FileOutputStream(file);
-            out.write(content.getBytes());
-            out.close();
+        if(chosenFile != null){
+            try{
+                // writing save content to file
+                OutputStream out = new FileOutputStream(chosenFile);
+                out.write(content.getBytes());
+                out.close();
+            }
+            catch(Exception e){
+                throw new Exception("Unable to write content to file '" + chosenFile.getName()  + "'.\n" + 
+                                    "Cause : \n\t" + e.toString());
+            }
         }
     }
 
@@ -115,6 +136,32 @@ public class FileManager {
 
         // showing the saving dialog and returning the selected file.
         return fileChooser.showSaveDialog(window);
+    }
+
+    /////////////////
+    // RENAME FILE //
+    /////////////////
+
+    /**
+     * Renames the File to the new name.
+     * 
+     * @param file File being renamed.
+     * @param newName New name for the file.
+     * @return The File object associated with renamed file
+     */
+    public static File renameFile(File file, String newName) throws Exception{
+        try{
+            // renaming associated File object
+            Path source = Paths.get(file.getAbsolutePath());
+            Path target = Files.move(source, source.resolveSibling(newName));
+
+            // gathering new file object
+            return target.toFile();
+        }
+        catch(Exception e){
+            throw new Exception("Unable to rename file '" + file.getName() + "' to '" + newName + "'.\n" + 
+                                "Cause : \n\t" + e.toString());
+        }
     }
 
     //////////////////////////

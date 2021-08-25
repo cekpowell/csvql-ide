@@ -4,6 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
+import java.io.File;
+
+import Controller.FileManager;
 import Controller.SystemController;
 import Model.Images;
 import View.Tools.PopUpWindow;
@@ -59,9 +62,9 @@ public class EditorTabToolbar extends AppToolbar{
         this.configureEvents();
 
         // adding controls to toolbar in three groups
-        this.addGroupsLeftContainerWithSepSplice(new Node[] {this.saveAsButton, this.saveButton, this.renameButton}, // SAVING GROUP
-                                                 new Node[] {this.undoButton, this.redoButton},                      // UNDO/REDO GROUP
-                                                 new Node[] {this.zoomInButton, this.zoomOutButton});                // ZOOM GROUP
+        this.addGroupsLeftContainerWithSepSplice(new Node[] {this.saveAsButton, this.saveButton},                  // FILE
+                                                 new Node[] {this.undoButton, this.redoButton, this.renameButton}, // EDIT
+                                                 new Node[] {this.zoomInButton, this.zoomOutButton});              // VIEW
 
     }
 
@@ -73,8 +76,16 @@ public class EditorTabToolbar extends AppToolbar{
         // save as
         this.saveAsButton.setOnAction((e) -> {
             try {
-                // saving the editor tab
-                SystemController.getInstance().saveEditorTabAs(this.editorTab);
+                // getting the file to save the program to
+                File chosenFile = FileManager.getNewSaveFile(this.getScene().getWindow(), 
+                                                             this.editorTab.getName(), 
+                                                             this.editorTab.getFileType().getExtensionFilters());
+
+                // making sure file was selected
+                if(chosenFile != null){
+                    // saving file through system controller
+                    SystemController.getInstance().saveEditorTabAs(this.editorTab, chosenFile); 
+                }
             } 
             catch (Exception ex) {
                 // showing error alert
