@@ -38,7 +38,7 @@
 - The finished application supports the **creation**, **development** and **execution** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
 - Support has also been added for **Python** and **Java** programs in order to demonstrate the versatility of the final application, with little required to provide support for further languages.
 
-<video src="https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
 
 ---
 
@@ -130,7 +130,7 @@ mvn clean javafx:run
 
 - Files can be dragged and dropped into the application Editor, where they will be loaded into the system.
  
- <video src="https://user-images.githubusercontent.com/60888912/130978141-4677606e-9a49-46c4-854a-4ddd948220f8.mov" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130980647-13b91ca7-c43a-4ee0-b040-264bdf994d6a.mov" width="600"></video>
 
 #### Table Store
 
@@ -140,7 +140,7 @@ mvn clean javafx:run
 - Files can also be removed from the table store using the **Close Button** on the graphic for the stored table.
 - **All loaded tables** can be **removed** from the Table Store using the **Clear Store** button.
 
-<video src="https://user-images.githubusercontent.com/60888912/130978118-546d0355-1f70-4cea-af4f-ec675348a08c.mov" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130980620-7b46c512-d4d7-43cf-957b-e81a188ea536.mov" width="600"></video>
 
 ### Editor Guide
 
@@ -167,7 +167,7 @@ mvn clean javafx:run
 - If the renaming process results in the type of file changing (e.g., from CSVQL program to table), the open Editor Tab and TableStore will update to reflect this change.
 - Note that a rename will fail if the provided file type is not supported by the system, or if the filename is already in use in the system.
 
-<video src="https://user-images.githubusercontent.com/60888912/130978020-35d3c32d-a9ca-42b5-8d68-5443d4e13bd8.mov" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130980568-77e7a0a8-b99c-4ff5-88c0-5beb4df1847f.mov" width="600"></video>
 
 - The **undo** and **redo** buttons can be used to **undo** and **redo** recent changes made to the Code Area respectivley.
 
@@ -189,7 +189,7 @@ mvn clean javafx:run
 - The output of the program being run will be displayed in the **Terminal**, along with any errors that were raised.
 - A **Terminal Toolbar** is displayed when output is present in the Terminal, which allows for the output to be **saved to a file** or **copied to the clipboard**, and for the **font size** to be **increased or decreased** (zoom in or out).
 
-<video src="https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
 
 ---
 
