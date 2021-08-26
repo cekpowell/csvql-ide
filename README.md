@@ -85,7 +85,7 @@ mvn clean javafx:run
 
 - The **File** menu in the **Toolbar** can be used to create a new file. 
 
- <p align="center">img width="300" alt="New File Toolbar" src="https://user-images.githubusercontent.com/60888912/130984661-fa4b89c4-e879-4617-a677-4333526f0672.png"></p>
+ <p align="center"><img width="300" alt="New File Toolbar" src="https://user-images.githubusercontent.com/60888912/130984661-fa4b89c4-e879-4617-a677-4333526f0672.png"></p>
 
 -  Alterativley, when no files are open within the **Editor**, the **New** button in the center of the Editor can be used to create a new file.
 
@@ -218,11 +218,19 @@ mvn clean javafx:run
 
 *Documented issues with the system that could not be resolved.*
 
-- <u>Selecting text with mouse in Code Area</u>
-  - It is not possible to select text within the Code Area of an Editor Tab by clicking and dragging the mouse. This appears to be related to a bug within the CodeMirror code, as per this [issue](https://github.com/codemirror/CodeMirror/issues/5733).
-- <u>Code Area does not work when packaed into a `.jar` executable</u>
-  - When the project is packaged into an executable `.jar` file, the WebView is no longer able to display the CodeMirror application. This appears to be due to the WebView not being able to load files from the `resources` folder within the jar, which is where the needed CodeMirror source code is located.
-- <u>First Table loaded into system doesnt show unsaved changes label</u>
-  - If a table is loaded into the application on start up, and changes are made to this file within the Editor Tab, the title of the tab is not updated to say `(Unsaved Changes)`. Note however that the table icon does change to the 'unnsaved' version, despite the fact that these changes are made at the same time in the source code. This error only occurs with a table file, and as soon interaction is made with a control outside of the EditorTab (e.g., toolbar), the tab name updates to say `(Unsaved)`, indicating that this issue is occuring at an application level.
+### Selecting text with mouse in Code Area
+
+- It is not possible to select text within the Code Area of an Editor Tab by clicking and dragging the mouse. This appears to be related to a bug within the CodeMirror code, as per this [issue](https://github.com/codemirror/CodeMirror/issues/5733).
+
+### Code Area does not work when packaed into a `.jar` executable
+
+- When the project is packaged into an executable `.jar` file, the WebView is no longer able to display the CodeMirror application. 
+- This appears to be due toa bug meaning that the WebView is not able to load files from the `resources` folder within the `jar`, which is where the needed CodeMirror source code is located.
+
+### First Table loaded into system doesnt show unsaved changes label</u>
+
+- If a table is loaded into the application on start up, and changes are made to this file within the Editor Tab, the title of the tab is not updated to say `(Unsaved Changes)`. 
+- Note however that the table icon does change to the 'unnsaved' version, despite the fact that these changes are made at the same time in the source code. 
+- This issue only effects a table file, and as soon interaction is made with a control outside of the EditorTab (e.g., toolbar), the tab name corrects to say `(Unsaved)`, indicating that this issue is occuring at a JavaFX level.
 
 ---
