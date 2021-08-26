@@ -6,11 +6,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.File;
-
-import Controller.FileManager;
 import Controller.SystemController;
-import Model.FileType;
 import View.App.Dashboard;
 import View.App.DashboardToolbar;
 import View.Tools.PopUpWindow;
