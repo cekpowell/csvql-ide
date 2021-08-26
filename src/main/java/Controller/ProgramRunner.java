@@ -73,16 +73,13 @@ public class ProgramRunner {
             // EXECUTING PROGRAM BASED ON TYPE //
 
             if(programType == FileType.PROGRAM_CSVQL){
-                // gathering output
                 programOutput = ProgramRunner.getCsvqlProgramOutput(tmpDir, programTab.getName());
             }
             else if(programType == FileType.PROGRAM_PYTHON){
-                // TODO
-                programOutput = "Not yet implemented.";
+                programOutput = ProgramRunner.getPythonProgramOutput(tmpDir, programTab.getName());
             }
             else if(programType == FileType.PROGRAM_JAVA){
-                // TODO
-                programOutput = "Not yet implemented.";
+                programOutput = ProgramRunner.getJavaProgramOutput(tmpDir, programTab.getName());
             }
 
             ///////////////////////
@@ -166,13 +163,72 @@ public class ProgramRunner {
 
         // CREATING EXECUTION COMMANDS //
     
-        String[] commands = {"bash", "-c",                                   // CONFIGURING BASH MODE
+        String[] commands = {"bash", "-c",                                  // CONFIGURING BASH MODE
                             "chmod +x " + interpreterExe +                  // MAKING CSVQL INTEREPRETER EXECUTABLE
                             " && ./" + interpreterExe + " " + programName}; // EXECUTING CSVQL INTERPRETER AND PROGRAM
 
         // EXECUTING COMMANDS //
             
         return ProgramRunner.runProcess(commands);
+    }
+
+    ////////////////////////////
+    // RUNNING PYTHON PROGRAM //
+    ////////////////////////////
+
+    /**
+     * Gathers the output of executing a provided Python program.
+     * 
+     * @param tmpDir The temporary directory containing the system files in use,
+     * @param programName The name of the CSVQL program to be executed.
+     * @return 
+     */
+    private static String getPythonProgramOutput(File tmpDir, String programName) throws Exception{
+
+        String interpreterExe = "python";
+
+        // CREATING EXECUTION COMMANDS //
+    
+        String[] commands = {interpreterExe, programName};
+
+        // EXECUTING COMMANDS //
+            
+        return ProgramRunner.runProcess(commands);
+    }
+
+    //////////////////////////
+    // RUNNING JAVA PROGRAM //
+    //////////////////////////
+
+    private static String getJavaProgramOutput(File tmpDir, String programName) throws Exception{
+
+        String compilerExe = "javac";
+
+        String executorExe = "java";
+
+        // CREATING COMPILE COMMANDS //
+
+        String[] compileCommands = {compilerExe, programName};
+
+        // EXECUTING COMPILE COMMANDS //
+            
+        String compileOutput = ProgramRunner.runProcess(compileCommands);
+
+        // Compilation successful - need to run code
+        if(compileOutput == ""){
+            // CREATING EXECUTING COMMANDS //
+
+            String[] executionCommands = {executorExe, programName.split("\\.")[0]}; 
+
+            // EXECUTING EXECUTING COMMANDS //
+                
+            return ProgramRunner.runProcess(executionCommands);
+        }
+        // compilation failed - need to return the compilation output (the error)
+        else{
+            return compileOutput;
+        }
+
     }
 
     ////////////////////

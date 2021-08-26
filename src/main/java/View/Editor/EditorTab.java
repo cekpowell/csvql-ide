@@ -128,27 +128,8 @@ public abstract class EditorTab extends Tab{
 
         // KeyBoard Shortcuts
         this.codeArea.setOnKeyPressed((e) -> {
-            // SAVE AS - CTRL + SHIFT + S
-            if(KeyCodes.CTRL_SHIFT_S.match(e)){
-                try {
-                    // getting the file to save the program to
-                    File chosenFile = FileManager.getNewSaveFile(this.getEditorTabToolbar().getScene().getWindow(), 
-                                                                 this.name, 
-                                                                 this.fileType.getExtensionFilters());
-
-                    // making sure file was selected
-                    if(chosenFile != null){
-                        // saving file through system controller
-                        SystemController.getInstance().saveEditorTabAs(this, chosenFile); 
-                    }
-                }
-                catch (Exception ex) {
-                    // showing error alert
-                    PopUpWindow.showErrorWindow(this.getEditorTabToolbar().getScene().getWindow(), ex);
-                }
-            }
             // SAVE - CTRL + S
-            else if(KeyCodes.CTRL_S.match(e)){
+            if(KeyCodes.CTRL_S.match(e)){
                 try {
                     // saving file through system controller
                     SystemController.getInstance().saveEditorTab(this);
