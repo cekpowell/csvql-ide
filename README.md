@@ -1,7 +1,3 @@
-
-
-https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4
-
 # CSV Query Language IDE
 
 ---
@@ -42,7 +38,7 @@ https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-
 
 - The finished application supports the **creation**, **editing** and **running** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
 
-<video src="img/intro_vid.mp4" width="600"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4" width="600"></video>
 
 ---
 
