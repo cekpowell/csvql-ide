@@ -38,7 +38,7 @@
 - The finished application supports the **creation**, **development** and **execution** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
 - Support has also been added for **Python** and **Java** programs in order to demonstrate the versatility of the final application, with little required to provide support for further languages.
 
-<video src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
+<video alt="Introduction" src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
 
 ---
 
@@ -55,7 +55,7 @@ mvn clean javafx:run
 
 - On start-up, the application should look like this:
 
-<img width="650" alt="Application Start" src="https://user-images.githubusercontent.com/60888912/130984072-a232c5d2-391d-4df1-b608-f0a70b0366e8.png">
+<img align="center" width="650" alt="Application Start" src="https://user-images.githubusercontent.com/60888912/130984072-a232c5d2-391d-4df1-b608-f0a70b0366e8.png">
 
 ---
 
