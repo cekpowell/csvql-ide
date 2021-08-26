@@ -2,7 +2,25 @@
 
 ---
 
-[TOC]
+## Contents
+
+- **[Introduction](#introduction)**
+  * **[Background](#background)**
+  * **[Project Description](#project-description)**
+- **[Getting Started](#getting-started)**
+- **[Application Structure](#application-structure)**
+- **[Usage](#usage)**
+  * **[Creating New Files](#creating-new-files)**
+  * **[Opening Existing Files](#opening-existing-files)**
+    + **[Open Buttons](#open-buttons)**
+    + **[Drag and Drop](#drag-and-drop)**
+    + **[Table Store](#table-store)**
+  * **[Editor Guide](#editor-guide)**
+  * **[Running Programs](#running-programs)**
+    + **[Execution](#execution)**
+    + **[Additional Terminal Features](#additional-terminal-features)**
+- **[Additional Langauge Support](#additional-langauge-support)**
+- **[Known Issues](#known-issues)**
 
 ---
 
@@ -18,7 +36,7 @@
 
 - The goal of this project was to create an **IDE/Text Editor** for **CSV Query Language**.
 
-- The finished application supports the **creation**, **editing** and **running** of CSVQL programs as well as CSV/text files (i.e., the input data) in a single environment and includes **highlighting** for CSVQL syntax.
+- The finished application supports the **creation**, **editing** and **running** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
 
 <video src="img/intro_vid.mp4" width="600"></video>
 
@@ -50,6 +68,7 @@ mvn clean javafx:run
   - **Table Store**
   - **Terminal**
 - Files that are loaded into or created in the application will be displayed as a tab in the **Editor**, where they can be **edited** and **run**.
+  - Each file present in the system is displayed in it's own tab in the Editor (just like normal text editors).
   - Each Editor Tab contains a toolbar that supports the saving, editing and running (if it is a program) of the file.
 - All tables loaded into the system are stored in the **Table Store**, and will be available for CSVQL programs when they arerun.
   - The purpose of the Table Store is to be able to have CSV tables loaded into the system without requiring them to be open in the Editor when a program is being run.
@@ -64,31 +83,109 @@ mvn clean javafx:run
 
 ### Creating New Files
 
-- 
+- The **File** menu in the **Toolbar** can be used to create a new file.
+
+<p align="center"><img src="img/new_toolbar.png" alt="distributed_file_storage_system" width="300";"/></p> 
+
+-  Alterativley, when no files are open within the **Editor**, the **New** button in the center of the Editor can be used to create a new file.
+
+<p align="center"><img src="img/new_editor.png" alt="distributed_file_storage_system" width="300";"/></p> 
+
+- When selected, a enter the **name** of the new file into the pop-up window and submit.
+  - A **file extension** must be provided, and the **filetype** will be derived from this extension.
+  - The file extensions supported by the system are as follows:
+    - **CQL Programs**: `.cql`
+    - **Tables**: `.csv`, `.txt`
+
+<p align="center"><img src="img/new_popup.png" alt="distributed_file_storage_system" width="300";"/></p> 
+
+- After submitting the filename a new Editor Tab will be displayed for the new file.
+  - If the type of file is not supported by the system, or if the provided filename is already in use, an error window is displayed and a new file is not created.
+
+<p align="center"><img src="img/new_file_created.png" alt="distributed_file_storage_system" width="650";"/></p> 
+
+- Multiple files can be created at once by supplying multiple filenames into the pop-up window, with each filename seperated by a space character.
+
+<p align="center"><img src="img/new_multiple.png" alt="distributed_file_storage_system" width="300";"/> <img src="img/new_multiple_created.png" alt="distributed_file_storage_system" width="650";"/></p> 
 
 ### Opening Existing Files
 
 #### Open Buttons
 
-- 
+- The **File** menu in the **Toolbar** can be used to create a open an existing file.
+
+<p align="center"><img src="img/open_toolbar.png" alt="distributed_file_storage_system" width="300";"/></p> 
+
+-  Alterativley, when no files are open within the **Editor**, the **Open** button in the center of the Editor can be used to create a new file.
+
+<p align="center"><img src="img/open_editor.png" alt="distributed_file_storage_system" width="300";"/></p> 
+
+- When selected, a File Chooser window is displayed that allows for an existing CSVQL programs or tables (CSV or Text) to be chosen.
+  - Only supported files can be selected within the file chooser.
+- All files chosen will be displayed in the system in new Editor Tabs.
+- A file will fail to load if the filename is already in use within the system.
+- Any Table that is loaded into the system will also be loaded into the Table Store.
 
 #### Drag and Drop
 
-- 
+- Files can be dragged and dropped into the application Editor, where they will be loaded into the system.
+
+<video src="img/drag_and_drop_editor.mov" width="700"></video>
 
 #### Table Store
 
-- 
+- Files can be loaded directly into the Table Store using the **Load button** in the store, or by dragging and dropping.
+  - Only files of the supported type for tables can be loaded into the table store (`.csv`, .`txt`).
+- A file that is loaded into the table store will not be displayed in the editor, but can be opened using the **Open In Editor** button on the graphic for the stored table.
+- Files can also be removed from the table store using the **Close Button** on the graphic for the stored table.
+- **All loaded tables** can be **removed** from the Table Store using the **Clear Store** button.
+
+<video src="img/drag_and_drop_table_store.mov" width="700"></video>
 
 ### Editor Guide
 
-- 
+- Each file open in the system is displayed in it's own tab, which contains a **Toolbar** for **controlling the file**, and a **Code Area** for editing the **code/text** within the file.
+- The toolbar and code editor are configured based on the type of file that is being displayed - e.g., no 'run' button is displayed for table files, and syntax highlighting is provided for CSVQL programs.
+
+<p align="center"><img src="img/editor_program.png" alt="distributed_file_storage_system" width="700";"/></p> 
+
+<p align="center"><img src="img/editor_table.png" alt="distributed_file_storage_system" width="700";"/></p> 
+
+#### Saving
+
+- The **Save As** and **Save** buttons within the **Toolbar** can be used to save a file. Saving can also be used with the `CTRL S` key combination.
+- If the file being saved is yet to be saved, a file chooser is displayed allowing for the save destination to be selected.
+
+- Note that the **name**  and **graphic** of the Editor Tab are updating to reflect the **save state** of the file as changes are made within the Code Area.
+
+<video src="img/saving.mov" width="700"></video>
+
+#### Editing File
+
+- The rename button can be used to **rename** a file open within the Editor.
+- After selection, a pop-up window is displayed that allows for the new file name to be provided.
+- If the renaming process results in the type of file changing (e.g., from CSVQL program to table), the open Editor Tab and TableStore will update to reflect this change.
+- Note that a rename will fail if the provided file type is not supported by the system, or if the filename is already in use in the system.
+
+<video src="img/rename.mov" width="700"></video>
+
+- The **undo** and **redo** buttons can be used to **undo** and **redo** recent changes made to the Code Area respectivley.
+
+#### View
+
+- The view of the Code Area within an Editor Tab can be altered using the **zoom in** and **zoom out** buttons, or by using the `CTRL =` and `CTRL -` key combinations respectivley.
+- Changing the zoom level within an Editor Tab will only have an effect on that said Editor Tab.
+
+#### Removing
+
+- Files can be **removed** from the Editor by **closing the tab** they are contained within (note this does not remove the actual file).
+- If there are unsaved changes to the file, a confirmation window is displayed asking for this action to be confirmed.
 
 ### Running Programs
 
 #### Execution
 
-- 
+- CSVQL programs can be executed
 
 #### Additional Terminal Features
 

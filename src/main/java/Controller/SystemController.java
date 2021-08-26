@@ -387,7 +387,7 @@ public class SystemController {
             // setting up new StoredTable instance
             StoredTable storedTable = null;
 
-            // dealing with StoredTable when old EditorTab was Table as well
+            // old table was table - need to reover stored table 
             if(editorTab.getFileType() == FileType.TABLE){
                 // casting old tab to TableTab (to get StoredTable instance)
                 TableTab tableTab = (TableTab) editorTab;
@@ -400,6 +400,10 @@ public class SystemController {
                     // updating StoredTable file
                     storedTable.setFile(newFile);
                 }
+            }
+            // old table was not table - need to make new stored table
+            else{
+                storedTable = this.createAndStoreNewStoredTable(newFile);
             }
 
             // initializing new EditorTab as TableTab
