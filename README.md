@@ -188,8 +188,8 @@ mvn clean javafx:run
 - CSVQL programs can be executed by selecting the **run** button within the Editor Tab Toolbar.
 - The output of the program being run will be displayed in the **Terminal**, along with any errors that were raised.
 - A **Terminal Toolbar** is displayed when output is present in the Terminal, which allows for the output to be **saved to a file** or **copied to the clipboard**, and for the **font size** to be **increased or decreased** (zoom in or out).
-
-<video src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
+ 
+<video src="https://user-images.githubusercontent.com/60888912/130981131-615b73d5-a566-4cd5-96a7-0208858fa04a.mp4" width="600"></video>
 
 ---
 
