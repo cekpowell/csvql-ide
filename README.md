@@ -34,9 +34,9 @@
 
 ### Project Description
 
-- The goal of this project was to create an **IDE/Text Editor** for **CSV Query Language**.
-
-- The finished application supports the **creation**, **editing** and **running** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
+- The goal of this project was to create an **IDE/Text Editor** for **CSV Query Language** using the JavaFX framework.
+- The finished application supports the **creation**, **development** and **execution** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
+- Support has also been added for **Python** and **Java** programs in order to demonstrate the versatility of the final application, with little required to provide support for further languages.
 
 <video src="https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4" width="600"></video>
 
@@ -187,10 +187,9 @@ mvn clean javafx:run
 
 - CSVQL programs can be executed by selecting the **run** button within the Editor Tab Toolbar.
 - The output of the program being run will be displayed in the **Terminal**, along with any errors that were raised.
+- A **Terminal Toolbar** is displayed when output is present in the Terminal, which allows for the output to be **saved to a file** or **copied to the clipboard**, and for the **font size** to be **increased or decreased** (zoom in or out).
 
-#### Additional Terminal Features
-
-- 
+<video src="https://user-images.githubusercontent.com/60888912/130972875-c77eecbf-c31c-42b1-a9ed-c1f78c0239a0.mp4" width="600"></video>
 
 ---
 
@@ -198,7 +197,20 @@ mvn clean javafx:run
 
 *A description of the additional programming langauges supported by the CSVQL IDE*.
 
-- 
+- CSVQL IDE was developed to support the creation, development and execution of CSVQL files, but in order to show the versatility of it's implementation, support has also been added for **Python** and **Java** programs. 
+- Simply open or create a Python/Java program within the Editor and run it for the program output to be displayed within the Terminal.
+
+
+
+- Other langauges could easily be added into the system by providing information on the **file/langauge structure** (expected file extension, syntax rules etc) as well as defining how a program in the language should be **executed** within the application's **Controller**.
+
+---
+
+### Third Party Acknowledgements
+
+*A description of the third-party packages/programs that were used in this project.*
+
+- [**CodeMirror**](https://github.com/codemirror/CodeMirror): A CodeMirror application is embedded in a JavafX `WebView` control within each Editor Tab to provide an area for editing the file's content.
 
 ---
 
