@@ -16,7 +16,7 @@ import View.Tools.PopUpWindow;
  */
 public class Main extends Application{
 
-    // static variables
+    // constants
     private static final int width = 1300;
     private static final int height = 800;
     private static final String titleName = "CSVQL IDE";

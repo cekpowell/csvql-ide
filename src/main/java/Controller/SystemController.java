@@ -346,7 +346,6 @@ public class SystemController {
      * new FileType is not supported, or the filename is already in use within the system.
      */
     public void renameEditorTab(EditorTab editorTab, String newFilename) throws Exception{
-        //TODO make it work with multiple program types
         // VALIDATING //
 
         Validator.validateRenameFile(editorTab, newFilename);
@@ -415,7 +414,7 @@ public class SystemController {
             newEditorTab = new ProgramTab(editorTabContainer,
                                           newName,
                                           newFile,
-                                          newFileType); /** Instantiate with the filetype (as there are multiple program FileTypes) */
+                                          newFileType); /** Instantiate ProgramTab with the filetype (as there are multiple program FileTypes) */
         }
 
         /////////////////////////////////////////////////

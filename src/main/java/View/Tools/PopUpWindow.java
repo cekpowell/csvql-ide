@@ -17,7 +17,7 @@ import javafx.stage.Window;
  */
 public class PopUpWindow {
     
-    // static variables
+    // constants
     // CONFIRMATION WINDOW
     private static final ButtonType confirm = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
     private static final ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);

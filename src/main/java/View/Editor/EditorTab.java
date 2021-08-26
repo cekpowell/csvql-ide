@@ -168,9 +168,9 @@ public abstract class EditorTab extends Tab{
         });
     }
 
-    ////////////////////
-    // HELPER METHODS //
-    ////////////////////
+    //////////////////////////////
+    // UPDATING TAB INFORMATION //
+    //////////////////////////////
 
     /**
      * Updates the graphic and name displayed in the tab title based on 

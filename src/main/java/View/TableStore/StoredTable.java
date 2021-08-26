@@ -95,6 +95,10 @@ public class StoredTable extends HBox{
         });
     }
 
+    ///////////////////////////////////////
+    // UPDATING STORED TABLE INFORMATION //
+    ///////////////////////////////////////
+    
     /**
      * Updates the content displayed in the stored table graphic.
      */

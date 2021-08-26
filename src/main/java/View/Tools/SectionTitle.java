@@ -12,7 +12,7 @@ import javafx.scene.text.FontWeight;
  */
 public class SectionTitle extends HBox{
 
-    // static variables
+    // constants
     private static final String font = "Verdana";
     private static final FontWeight fontWeight = FontWeight.BOLD;
     private static final int fontSize = 15;
