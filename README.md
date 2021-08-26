@@ -44,7 +44,7 @@
 
 ## Getting Started
 
-*A step-by-step guide on how to run th CSVQL IDE.*
+> *A step-by-step guide on how to run th CSVQL IDE.*
 
 - The CSVQL IDE can be run using the provided `pom.xml` file with the `maven` framework.
 - Clone the repo and use the following command to run the application:
@@ -61,7 +61,7 @@ mvn clean javafx:run
 
 ## Application Structure
 
-*A breakdown of the IDE's application structure.*
+> *A breakdown of the IDE's application structure.*
 
 - The appplication is broken down into three sections.
   - **Editor**
@@ -79,7 +79,7 @@ mvn clean javafx:run
 
 ## Usage
 
-*A short guide on the main features of the application.*
+> *A short guide on the main features of the application.*
 
 ### Creating New Files
 
@@ -129,7 +129,7 @@ mvn clean javafx:run
 #### Drag and Drop
 
 - Files can be dragged and dropped into the application Editor, where they will be loaded into the system.
- 
+
  <video src="https://user-images.githubusercontent.com/60888912/130978141-4677606e-9a49-46c4-854a-4ddd948220f8.mov" width="600"></video>
 
 #### Table Store
@@ -195,20 +195,20 @@ mvn clean javafx:run
 
 ## Additional Langauge Support
 
-*A description of the additional programming langauges supported by the CSVQL IDE*.
+> *A description of the additional programming langauges supported by the CSVQL IDE*.
 
 - CSVQL IDE was developed to support the creation, development and execution of CSVQL files, but in order to show the versatility of it's implementation, support has also been added for **Python** and **Java** programs. 
 - Simply open or create a Python/Java program within the Editor and run it for the program output to be displayed within the Terminal.
 
 <video src="https://user-images.githubusercontent.com/60888912/130977823-3ea3bfed-9999-493d-926d-51acd00783a8.mov" width="600"></video>
- 
+
 - Other langauges could easily be added into the system by providing information on the **file/langauge structure** (expected file extension, syntax rules etc) as well as defining how a program in the language should be **executed** within the application's **Controller**.
 
 ---
 
 ### Third Party Acknowledgements
 
-*A description of the third-party packages/programs that were used in this project.*
+> *A description of the third-party packages/programs that were used in this project.*
 
 - [**CodeMirror**](https://github.com/codemirror/CodeMirror): A CodeMirror application is embedded in a JavafX `WebView` control within each Editor Tab to provide an area for editing the file's content.
 
@@ -216,7 +216,7 @@ mvn clean javafx:run
 
 ## Known Issues
 
-*Documented issues with the system that could not be resolved.*
+> *Documented issues with the system that could not be resolved.*
 
 - 
 
