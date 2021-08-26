@@ -185,7 +185,8 @@ mvn clean javafx:run
 
 #### Execution
 
-- CSVQL programs can be executed
+- CSVQL programs can be executed by selecting the **run** button within the Editor Tab Toolbar.
+- The output of the program being run will be displayed in the **Terminal**, along with any errors that were raised.
 
 #### Additional Terminal Features
 
