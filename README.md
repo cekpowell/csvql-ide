@@ -55,7 +55,7 @@ mvn clean javafx:run
 
 - On start-up, the application should look like this:
 
-<img align="center" width="650" alt="Application Start" src="https://user-images.githubusercontent.com/60888912/130984072-a232c5d2-391d-4df1-b608-f0a70b0366e8.png">
+<p align="center"> <img width="650" alt="Application Start" src="https://user-images.githubusercontent.com/60888912/130984072-a232c5d2-391d-4df1-b608-f0a70b0366e8.png"></p>
 
 ---
 
