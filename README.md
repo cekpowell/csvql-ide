@@ -129,8 +129,8 @@ mvn clean javafx:run
 #### Drag and Drop
 
 - Files can be dragged and dropped into the application Editor, where they will be loaded into the system.
-
-<video src="img/drag_and_drop_editor.mov" width="700"></video>
+ 
+ <video src="https://user-images.githubusercontent.com/60888912/130978141-4677606e-9a49-46c4-854a-4ddd948220f8.mov" width="600"></video>
 
 #### Table Store
 
@@ -140,7 +140,7 @@ mvn clean javafx:run
 - Files can also be removed from the table store using the **Close Button** on the graphic for the stored table.
 - **All loaded tables** can be **removed** from the Table Store using the **Clear Store** button.
 
-<video src="img/drag_and_drop_table_store.mov" width="700"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130978118-546d0355-1f70-4cea-af4f-ec675348a08c.mov" width="600"></video>
 
 ### Editor Guide
 
@@ -158,7 +158,7 @@ mvn clean javafx:run
 
 - Note that the **name**  and **graphic** of the Editor Tab are updating to reflect the **save state** of the file as changes are made within the Code Area.
 
-<video src="img/saving.mov" width="700"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130978284-72fd10e9-7865-411b-a41d-717b5dfccf19.mov" width="600"></video>
 
 #### Editing File
 
@@ -167,7 +167,7 @@ mvn clean javafx:run
 - If the renaming process results in the type of file changing (e.g., from CSVQL program to table), the open Editor Tab and TableStore will update to reflect this change.
 - Note that a rename will fail if the provided file type is not supported by the system, or if the filename is already in use in the system.
 
-<video src="img/rename.mov" width="700"></video>
+<video src="https://user-images.githubusercontent.com/60888912/130978020-35d3c32d-a9ca-42b5-8d68-5443d4e13bd8.mov" width="600"></video>
 
 - The **undo** and **redo** buttons can be used to **undo** and **redo** recent changes made to the Code Area respectivley.
 
@@ -200,8 +200,8 @@ mvn clean javafx:run
 - CSVQL IDE was developed to support the creation, development and execution of CSVQL files, but in order to show the versatility of it's implementation, support has also been added for **Python** and **Java** programs. 
 - Simply open or create a Python/Java program within the Editor and run it for the program output to be displayed within the Terminal.
 
-
-
+<video src="https://user-images.githubusercontent.com/60888912/130977823-3ea3bfed-9999-493d-926d-51acd00783a8.mov" width="600"></video>
+ 
 - Other langauges could easily be added into the system by providing information on the **file/langauge structure** (expected file extension, syntax rules etc) as well as defining how a program in the language should be **executed** within the application's **Controller**.
 
 ---
