@@ -83,13 +83,13 @@ mvn clean javafx:run
 
 ### Creating New Files
 
-- The **File** menu in the **Toolbar** can be used to create a new file.
-
-<p align="center"><img src="img/new_toolbar.png" alt="distributed_file_storage_system" width="300";"/></p> 
-
+- The **File** menu in the **Toolbar** can be used to create a new file. 
+ 
+ <p align="center">img width="300" alt="New File Toolbar" src="https://user-images.githubusercontent.com/60888912/130984661-fa4b89c4-e879-4617-a677-4333526f0672.png"></p>
+ 
 -  Alterativley, when no files are open within the **Editor**, the **New** button in the center of the Editor can be used to create a new file.
 
-<p align="center"><img src="img/new_editor.png" alt="distributed_file_storage_system" width="300";"/></p> 
+<p align="center"><img width="300" alt="New File Editor" src="https://user-images.githubusercontent.com/60888912/130984757-4633b638-f608-49f9-a3d2-58ae5d8ec6f2.png"></p>
 
 - When selected, a enter the **name** of the new file into the pop-up window and submit.
   - A **file extension** must be provided, and the **filetype** will be derived from this extension.
@@ -97,16 +97,16 @@ mvn clean javafx:run
     - **CQL Programs**: `.cql`
     - **Tables**: `.csv`, `.txt`
 
-<p align="center"><img src="img/new_popup.png" alt="distributed_file_storage_system" width="300";"/></p> 
+<p align="center"><img width="350" alt="New File Form" src="https://user-images.githubusercontent.com/60888912/130984953-b5f3c230-72b1-4ce3-84ff-a04c39eab75c.png"></p> 
 
 - After submitting the filename a new Editor Tab will be displayed for the new file.
   - If the type of file is not supported by the system, or if the provided filename is already in use, an error window is displayed and a new file is not created.
 
-<p align="center"><img src="img/new_file_created.png" alt="distributed_file_storage_system" width="650";"/></p> 
+<p align="center"><img width="650" alt="New File Created" src="https://user-images.githubusercontent.com/60888912/130985080-ce6e9e07-f0ea-4dfd-8734-8dcc255a5376.png"></p>
 
 - **Multiple files** can be created at once by supplying multiple filenames into the pop-up window, with each filename seperated by a space character.
 
-<p align="center"><img src="img/new_multiple.png" alt="distributed_file_storage_system" width="300";"/> <img src="img/new_multiple_created.png" alt="distributed_file_storage_system" width="650";"/></p> 
+<p align="center"> <img width="354" alt="Multiple New File Form" src="https://user-images.githubusercontent.com/60888912/130985463-5d226a36-9cdb-4a3c-bb60-eba511c64467.png"> <img width="1412" alt="Multiple New Files Created" src="https://user-images.githubusercontent.com/60888912/130985492-d34d02b2-baaf-4269-8a61-b36e652454c2.png"> </p> 
 
 ### Opening Existing Files
 
@@ -114,11 +114,11 @@ mvn clean javafx:run
 
 - The **File** menu in the **Toolbar** can be used to create a open an existing file.
 
-<p align="center"><img src="img/open_toolbar.png" alt="distributed_file_storage_system" width="300";"/></p> 
+<p align="center"><img width="266" alt="Open File Toolbar" src="https://user-images.githubusercontent.com/60888912/130985164-2b974040-055c-44d9-a19c-7bd59c51b03f.png"> </p>
 
 -  Alterativley, when no files are open within the **Editor**, the **Open** button in the center of the Editor can be used to create a new file.
 
-<p align="center"><img src="img/open_editor.png" alt="distributed_file_storage_system" width="300";"/></p> 
+<p align="center"><img width="301" alt="Open File Editor" src="https://user-images.githubusercontent.com/60888912/130985615-8e5c7106-15f7-409c-bfe1-c165d320fcdd.png"></p> 
 
 - When selected, a File Chooser window is displayed that allows for an existing CSVQL programs or tables (CSV or Text) to be chosen.
   - Only supported files can be selected within the file chooser.
@@ -147,9 +147,9 @@ mvn clean javafx:run
 - Each file open in the system is displayed in it's own tab, which contains a **Toolbar** for **controlling the file**, and a **Code Area** for editing the **code/text** within the file.
 - The toolbar and code editor are configured based on the type of file that is being displayed - e.g., no 'run' button is displayed for table files, and syntax highlighting is provided for CSVQL programs.
 
-<p align="center"><img src="img/editor_program.png" alt="distributed_file_storage_system" width="700";"/></p> 
+<p align="center"><img width="865" alt="Program Editor Tab" src="https://user-images.githubusercontent.com/60888912/130986117-b4884836-3e76-4198-9e82-23dc2a60635a.png"></p> 
 
-<p align="center"><img src="img/editor_table.png" alt="distributed_file_storage_system" width="700";"/></p> 
+<p align="center"> <img width="867" alt="Table Editor Tab" src="https://user-images.githubusercontent.com/60888912/130986151-fae69c81-bcda-472a-b2e0-d82cf5613fc2.png"> </p> 
 
 #### Saving
 
