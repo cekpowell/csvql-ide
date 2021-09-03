@@ -38,8 +38,6 @@
 - The finished application supports the **creation**, **development** and **execution** of CSVQL programs (as well as tables in the form of CSV/text files) in a single environment and includes **highlighting** for the CSVQL syntax.
 - Support has also been added for **Python** and **Java** programs in order to demonstrate the versatility of the final application, with little required to provide support for further languages.
 
-<video alt="Introduction" src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
-
 ### Application Structure
 
 - The appplication is broken down into three sections.
@@ -53,6 +51,9 @@
   - The purpose of the Table Store is to be able to have CSV tables loaded into the system without requiring them to be open in the Editor when a program is being run.
 - When running a CSVQL program, the program output is displayed in the **Terminal**.
   - The Terminal contains a toolbar that supports the saving of this output to a file, or copying it to the clipboard.
+
+<video alt="Introduction" src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="550"></video>
+
 
 ---
 
