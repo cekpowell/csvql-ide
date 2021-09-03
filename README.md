@@ -7,8 +7,8 @@
 - **[Introduction](#introduction)**
   * **[Background](#background)**
   * **[Project Description](#project-description)**
-- **[Getting Started](#getting-started)**
-- **[Application Structure](#application-structure)**
+  * **[Application Structure](#application-structure)**
+- **[Running The Application](#getting-started)**
 - **[Usage](#usage)**
   * **[Creating New Files](#creating-new-files)**
   * **[Opening Existing Files](#opening-existing-files)**
@@ -56,7 +56,7 @@
 
 ---
 
-## Getting Started
+## Running The Application
 
 *A step-by-step guide on how to run th CSVQL IDE.*
 
