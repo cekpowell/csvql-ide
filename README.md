@@ -40,6 +40,20 @@
 
 <video alt="Introduction" src="https://user-images.githubusercontent.com/60888912/130980529-e4bb1c6e-d108-44df-80e7-81c2420176e0.mp4" width="600"></video>
 
+### Application Structure
+
+- The appplication is broken down into three sections.
+  - **Editor**
+  - **Table Store**
+  - **Terminal**
+- Files that are loaded into or created in the application will be displayed as a tab in the **Editor**, where they can be **edited** and **run**.
+  - Each file present in the system is displayed in it's own tab in the Editor (just like normal text editors).
+  - Each Editor Tab contains a toolbar that supports the saving, editing and running (if it is a program) of the file.
+- All tables loaded into the system are stored in the **Table Store**, and will be available for CSVQL programs when they arerun.
+  - The purpose of the Table Store is to be able to have CSV tables loaded into the system without requiring them to be open in the Editor when a program is being run.
+- When running a CSVQL program, the program output is displayed in the **Terminal**.
+  - The Terminal contains a toolbar that supports the saving of this output to a file, or copying it to the clipboard.
+
 ---
 
 ## Getting Started
@@ -56,24 +70,6 @@ mvn clean javafx:run
 - On start-up, the application should look like this:
 
 <p align="center"> <img width="650" alt="Application Start" src="https://user-images.githubusercontent.com/60888912/130984072-a232c5d2-391d-4df1-b608-f0a70b0366e8.png"></p>
-
----
-
-## Application Structure
-
-*A breakdown of the IDE's application structure.*
-
-- The appplication is broken down into three sections.
-  - **Editor**
-  - **Table Store**
-  - **Terminal**
-- Files that are loaded into or created in the application will be displayed as a tab in the **Editor**, where they can be **edited** and **run**.
-  - Each file present in the system is displayed in it's own tab in the Editor (just like normal text editors).
-  - Each Editor Tab contains a toolbar that supports the saving, editing and running (if it is a program) of the file.
-- All tables loaded into the system are stored in the **Table Store**, and will be available for CSVQL programs when they arerun.
-  - The purpose of the Table Store is to be able to have CSV tables loaded into the system without requiring them to be open in the Editor when a program is being run.
-- When running a CSVQL program, the program output is displayed in the **Terminal**.
-  - The Terminal contains a toolbar that supports the saving of this output to a file, or copying it to the clipboard.
 
 ---
 
