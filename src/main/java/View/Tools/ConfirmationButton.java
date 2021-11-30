@@ -13,6 +13,10 @@ public class ConfirmationButton extends Button {
     private String confirmationTitle;
     private String confirmationMessage;
 
+    //////////////////
+    // INITIALIZING //
+    //////////////////
+
     /**
      * Class constructor.
      * 
