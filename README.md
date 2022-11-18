@@ -1,4 +1,4 @@
-# CSV Query Language IDE
+# CSVQL IDE
 
 ---
 
